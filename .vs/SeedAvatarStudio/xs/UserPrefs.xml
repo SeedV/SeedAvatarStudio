@@ -1,0 +1,29 @@
+﻿<Properties StartupConfiguration="{1B29AFA4-C849-D014-99A1-FC37292D334A}|">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Src/Scripts/tests.cs">
+    <Files>
+      <File FileName="Assets/Src/Scripts/tests.cs" Line="17" Column="34" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="SeedAvatarStudio" expanded="True">
+            <Node name="Assets" expanded="True">
+              <Node name="Src" expanded="True">
+                <Node name="Scripts" expanded="True">
+                  <Node name="tests.cs" selected="True" />
+                </Node>
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.ItemProperties.Assembly-CSharp PreferredExecutionTarget="b27d5b8d-416f-4e1d-ae57-666a89ecba7c" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>
