@@ -20,8 +20,7 @@ using UnityEngine.UI;
 
 
 
-public class HeaderButtonEvents : MonoBehaviour
-{
+public class HeaderButtonEvents : MonoBehaviour{
     
     [SerializeField] private Animator _animatorHeader;
     [SerializeField] private Animator _animatorViewport;
@@ -30,51 +29,42 @@ public class HeaderButtonEvents : MonoBehaviour
     private const string _animatorHide = "Hide";
 
     // Start is called before the first frame update
-    void Start()
-    {
+    void Start(){
        
     }
 
     // Update is called once per frame
-    void Update()
-    {
+    void Update(){
         
     }
 
-    public void OnHideUI()
-    {
+    public void OnHideUI(){
         _animatorHeader.SetTrigger(_animatorHide);
         _animatorViewport.SetTrigger(_animatorHide);
     }
 
-    public void OnShowUI()
-    {
+    public void OnShowUI(){
         _animatorHeader.SetTrigger(_animatorShow);
         _animatorViewport.SetTrigger(_animatorShow);
     }
 
-    public void OnClose()
-    {
+    public void OnClose(){
         Application.Quit();
     }
 
-    public void OnStart()
-    {
+    public void OnStart(){
 
     }
 
-    public void OnStop()
-    {
+    public void OnStop(){
 
     }
 
-    public void OnSetting()
-    {
+    public void OnSetting(){
 
     }
 
-    public void OnInputSet()
-    {
+    public void OnInputSet(){
 
     }
 
