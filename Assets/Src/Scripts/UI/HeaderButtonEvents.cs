@@ -12,61 +12,39 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-
-
-
-public class HeaderButtonEvents : MonoBehaviour{
-    
-    [SerializeField] private Animator _animatorHeader;
-    [SerializeField] private Animator _animatorViewport;
-
-    private const string _animatorShow = "Show";
-    private const string _animatorHide = "Hide";
-
-    // Start is called before the first frame update
-    void Start(){
-       
-    }
-
-    // Update is called once per frame
-    void Update(){
-        
-    }
-
-    public void OnHideUI(){
-        _animatorHeader.SetTrigger(_animatorHide);
-        _animatorViewport.SetTrigger(_animatorHide);
-    }
-
-    public void OnShowUI(){
-        _animatorHeader.SetTrigger(_animatorShow);
-        _animatorViewport.SetTrigger(_animatorShow);
-    }
-
-    public void OnClose(){
-        Application.Quit();
-    }
-
-    public void OnStart(){
-
-    }
-
-    public void OnStop(){
-
-    }
-
-    public void OnSetting(){
-
-    }
-
-    public void OnInputSet(){
-
-    }
-
-    
+public class HeaderButtonEvents : MonoBehaviour {
+  private const string _animatorShow = "Show";
+  private const string _animatorHide = "Hide";
+  [SerializeField] private Animator _animatorHeader;
+  [SerializeField] private Animator _animatorViewport;
+  //HideUI button click event 
+  public void OnHideUI() {
+    _animatorHeader.SetTrigger(_animatorHide);
+    _animatorViewport.SetTrigger(_animatorHide);
+  }
+  //ExithideUI button click event
+  public void OnShowUI() {
+    _animatorHeader.SetTrigger(_animatorShow);
+    _animatorViewport.SetTrigger(_animatorShow);
+  }
+  //Close app button click event
+  public void OnClose() {
+    Application.Quit();
+  }
+  //Play button click event
+  public void OnPlay() {
+  }
+  //Stop button click event
+  public void OnStop() {
+  }
+  //Setting button click event
+  public void OnSetting() {
+  }
+  //InputSetting button click event
+  public void OnInputSet() {
+  }
 }
