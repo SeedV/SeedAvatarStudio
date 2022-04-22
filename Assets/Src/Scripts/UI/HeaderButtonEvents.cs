@@ -17,48 +17,48 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-// This class is the UI header panel buttons click events script
+// This class is the UI header panel buttons click events script.
 public class HeaderButtonEvents : MonoBehaviour {
-    
-  //Animator trigger Param
+
+  // Animator trigger Param.
   private const string _animatorShow = "Show";
-  //Animator trigger Param
+  // Animator trigger Param.
   private const string _animatorHide = "Hide";
-  //Header panel animator
+  // Header panel animator.
   [SerializeField] private Animator _animatorHeader;
-  //viewport panel animator
+  // Viewport panel animator.
   [SerializeField] private Animator _animatorViewport;
 
-  //HideUI button click event 
+  // HideUI button click event.
   public void OnHideUI() {
     _animatorHeader.SetTrigger(_animatorHide);
     _animatorViewport.SetTrigger(_animatorHide);
   }
 
-  //ExithideUI button click event
+  // ExithideUI button click event.
   public void OnShowUI() {
     _animatorHeader.SetTrigger(_animatorShow);
     _animatorViewport.SetTrigger(_animatorShow);
   }
 
-  //Close app button click event
+  // Close app button click event.
   public void OnClose() {
     Application.Quit();
   }
 
-  //Play button click event
+  // Play button click event.
   public void OnPlay() {
   }
 
-  //Stop button click event
+  // Stop button click event.
   public void OnStop() {
   }
 
-  //Setting button click event
+  // Setting button click event.
   public void OnSetting() {
   }
 
-  //InputSetting button click event
+  // InputSetting button click event.
   public void OnInputSet() {
   }
 }
