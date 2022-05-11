@@ -23,7 +23,4 @@ public class InputSetDialogEvents : MonoBehaviour {
   public void OnCancel() {
     gameObject.SetActive(false);
   }
-  // Save Button Event
-  public void OnSave() {
-  }
 }
