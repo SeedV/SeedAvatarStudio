@@ -16,6 +16,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InputSetDialogEvents : MonoBehaviour {
   // Cancel Button Event
@@ -24,8 +25,5 @@ public class InputSetDialogEvents : MonoBehaviour {
   }
   // Save Button Event
   public void OnSave() {
-  }
-  // ReSet Button Event
-  public void OnReSet() {
   }
 }
