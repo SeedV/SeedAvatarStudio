@@ -12,28 +12,58 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-
+using System.Diagnostics;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using Debug = UnityEngine.Debug;
 
 public class WebCamSource : MonoBehaviour {
-  public int Width = 1200;
-  public int Height = 720;
+  public Dropdown CameraDropdown;
+  public string DeviceName;
   public int Fps = 30;
   public RawImage OutScreen;
   private WebCamTexture _webCam;
+  private int _width = 1280;
+  private int _height = 720;
+  private List<string> _devicesName = new List<string>();
 
+  public void Play() {
+    if(_webCam == null) {
+      _webCam = new WebCamTexture(DeviceName, _width, _height, Fps);
+      _webCam.Play();
+    }
+  }
+  public void Stop() {
+    if(_webCam != null) {
+      _webCam.Stop();
+      _webCam = null;
+    }
+  }
+  public void CameraDropdownChange(int value) {
+    //Debug.Log(_devicesName.ToArray()[value]);
+    if(_devicesName.ToArray()[value] != null) {
+      DeviceName = _devicesName.ToArray()[value];
+    }
+  }
   IEnumerator Start() {
     yield return Application.RequestUserAuthorization (UserAuthorization.WebCam);
     if(Application.HasUserAuthorization(UserAuthorization.WebCam)) {
       WebCamDevice[] devices = WebCamTexture.devices;
-      _webCam = new WebCamTexture(devices[2].name, Width, Height, Fps);
-      _webCam.Play();
+      CameraDropdown.ClearOptions();
+      for(int i = 0; i< devices.Length; i++) {
+        _devicesName.Add(devices[i].name);
+      }
+      CameraDropdown.AddOptions(_devicesName);
+      CameraDropdown.value = 0;
+      CameraDropdown.captionText.text = CameraDropdown.options[0].text;
+      CameraDropdown.onValueChanged.AddListener(CameraDropdownChange);
     }
   }
   void Update() {
-    OutScreen.texture = _webCam;
+    if(_webCam != null) {
+      OutScreen.texture = _webCam;
+    }
   }
 }
