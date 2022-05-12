@@ -24,6 +24,7 @@ public class HeaderButtonEvents : MonoBehaviour {
   private const string _animatorShow = "Show";
   // Animator trigger Param.
   private const string _animatorHide = "Hide";
+  [SerializeField] private GameObject _inputDialog;
   // Header panel animator.
   [SerializeField] private Animator _animatorHeader;
   // Viewport panel animator.
@@ -60,5 +61,6 @@ public class HeaderButtonEvents : MonoBehaviour {
 
   // InputSetting button click event.
   public void OnInputSet() {
+    _inputDialog.SetActive(true);
   }
 }

@@ -142,6 +142,7 @@ public class WebCamSource : MonoBehaviour {
   }
   void Update() {
     if(_webCam != null) {
+      if (!_webCam.didUpdateThisFrame) return;
       bool vFlip = _webCam.videoVerticallyMirrored;
       Vector2 scale = new Vector2(Flip ? -1 : 1, vFlip ? -1 : 1);
       Vector2 offset = new Vector2(Flip ? 1 : 0 / 2, vFlip ? 1 : 0);
