@@ -35,25 +35,28 @@ public class WebCamSource : MonoBehaviour {
   private List<string> _resolutionOpt = new List<string>(){"1280X720","1600X900","1920X1080"};
   private List<string> _fpsOpt = new List<string>(){"30Hz","60Hz"};
   private List<string> _flipOpt = new List<string>(){"默认","水平翻转"};
-
+  //Start button event
   public void Play() {
     if(_webCam == null) {
       _webCam = new WebCamTexture(DeviceName, _width, _height, Fps);
       _webCam.Play();
     }
   }
+  //Stop button event
   public void Stop() {
     if(_webCam != null) {
       _webCam.Stop();
       _webCam = null;
     }
   }
+  //DropdownChange event
   public void CameraDropdownChange(int value) {
     //Debug.Log(_devicesName.ToArray()[value]);
     if(_devicesName.ToArray()[value] != null) {
       DeviceName = _devicesName.ToArray()[value];
     }
   }
+  //DropdownChange event
   public void ResolutionDropdownChange(int value) {
     string _resolution = _resolutionOpt.ToArray()[value];
     if(_resolution != null) {
@@ -76,6 +79,7 @@ public class WebCamSource : MonoBehaviour {
       //Debug.Log(_width);
     }
   }
+  //DropdownChange event
   public void FpsDropdownChange(int value) {
     string _fps = _fpsOpt.ToArray()[value];
     if(_fps != null) {
@@ -92,6 +96,7 @@ public class WebCamSource : MonoBehaviour {
       //Debug.Log(Fps);
     }
   }
+  //DropdownChange event
   public void FlipDropdownChange(int value) {
     string _flip = _flipOpt.ToArray()[value];
     if(_flip != null) {
@@ -108,6 +113,7 @@ public class WebCamSource : MonoBehaviour {
       //Debug.Log(Flip);
     }
   }
+  //Webcam and params init
   IEnumerator Start() {
     yield return Application.RequestUserAuthorization (UserAuthorization.WebCam);
     if(Application.HasUserAuthorization(UserAuthorization.WebCam)) {
