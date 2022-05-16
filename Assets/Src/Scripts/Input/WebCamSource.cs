@@ -147,33 +147,30 @@ namespace SeedAvatar {
       target.ClearOptions();
       switch (dropdownkey) {
         case DropdownKey.CAMERA:
-          target.AddOptions(optarr);
           target.onValueChanged.AddListener(CameraDropdownChange);
           break;
         case DropdownKey.RESOLUTION:
           foreach (ResolutionOptions opt in Enum.GetValues(typeof(ResolutionOptions))) {
             optarr.Add(_resolutionDic[opt]);
           }
-          target.AddOptions(optarr);
           target.onValueChanged.AddListener(ResolutionDropdownChange);
           break;
         case DropdownKey.FPS:
           foreach (FpsOptions opt in Enum.GetValues(typeof(FpsOptions))) {
             optarr.Add(_fpsDic[opt]);
           }
-          target.AddOptions(optarr);
           target.onValueChanged.AddListener(FpsDropdownChange);
           break;
         case DropdownKey.FLIP:
           foreach (FlipOptions opt in Enum.GetValues(typeof(FlipOptions))) {
             optarr.Add(_flipDic[opt]);
           }
-          target.AddOptions(optarr);
           target.onValueChanged.AddListener(FlipDropdownChange);
           break;
         default:
           break;
       }
+      target.AddOptions(optarr);
       target.value = 0;
       target.captionText.text = target.options[0].text;
     }
