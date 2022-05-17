@@ -50,23 +50,23 @@ namespace SeedAvatar {
     private WebCamTexture _webCam;
     private int _width = 1280;
     private int _height = 720;
-    private static readonly Dictionary<int, string> _resolutionDict =
-    new Dictionary<int, string> {
+    private static readonly SortedDictionary<int, string> _resolutionDict =
+    new SortedDictionary<int, string> {
       { (int)ResolutionOptions.LOW , "1280x720" },
       { (int)ResolutionOptions.MIDDLE, "1600x900" },
       { (int)ResolutionOptions.HIGH , "1920x1080" },
     };
-    private static readonly Dictionary<int, string> _fpsDict =
-    new Dictionary<int, string> {
+    private static readonly SortedDictionary<int, string> _fpsDict =
+    new SortedDictionary<int, string> {
       { (int)FpsOptions.LOW , "30Hz" },
       { (int)FpsOptions.HIGH , "60Hz" },
     };
-    private static readonly Dictionary<int, string> _flipDict =
-    new Dictionary<int, string> {
+    private static readonly SortedDictionary<int, string> _flipDict =
+    new SortedDictionary<int, string> {
       { (int)FlipOptions.NORMAL , "Normal" },
       { (int)FlipOptions.MIRRORING , "Mirroring" },
     };
-    private Dictionary<int, string> _devicesDict = new Dictionary<int, string> { };
+    private SortedDictionary<int, string> _devicesDict = new SortedDictionary<int, string>();
 
     // Start button event.
     public void Play() {
@@ -86,7 +86,7 @@ namespace SeedAvatar {
 
     // DropdownChange event.
     public void OnCameraDropdownChange(int value) {
-      if (_devicesDict[value] != null) {
+      if (_devicesDict.ContainsKey(value)) {
         DeviceName = _devicesDict[value];
       }
     }
@@ -139,7 +139,7 @@ namespace SeedAvatar {
       }
     }
 
-    private void InitDropdown(Dropdown target, Dictionary<int, string> optDict, UnityAction<int> onChangedCallback) {
+    private void InitDropdown(Dropdown target, SortedDictionary<int, string> optDict, UnityAction<int> onChangedCallback) {
       target.ClearOptions();
       List<string> optStrings = optDict.Count == 0 ? new List<string>() : new List<string>(optDict.Values);
       target.AddOptions(optStrings);
