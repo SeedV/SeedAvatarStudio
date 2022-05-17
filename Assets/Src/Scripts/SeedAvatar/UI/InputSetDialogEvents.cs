@@ -18,9 +18,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class InputSetDialogEvents : MonoBehaviour {
-  // Cancel Button Event
-  public void OnCancel() {
-    gameObject.SetActive(false);
+namespace SeedAvatar {
+
+  public class InputSetDialogEvents : MonoBehaviour {
+    // Cancel Button Event
+    public void OnCancel() {
+      gameObject.SetActive(false);
+    }
   }
 }
