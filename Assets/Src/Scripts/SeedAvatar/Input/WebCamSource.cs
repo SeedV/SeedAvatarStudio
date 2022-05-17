@@ -157,7 +157,7 @@ namespace SeedAvatar {
         _devicesDict.Clear();
         foreach (var device in devices) {
           _devicesDict.Add(dictKey, device.name);
-          _dictKey++;
+          dictKey++;
         }
         InitDropdown(CameraDropdown, _devicesDict, OnCameraDropdownChange);
       }
