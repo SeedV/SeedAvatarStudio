@@ -73,13 +73,21 @@ public abstract class BaseTracker : MonoBehaviour {
     SidePacket sidePacket = _graphRunner.BuildSidePacket(_rotation, _hFlip, _vFlip);
     _graphRunner.StartRun(sidePacket);
     Logger.LogInfo(_tag, "Graph Runner started in async mode!");
+  }
 
-    _coroutine = StartCoroutine(ProcessImage(_sourceTexture));
+  public void StartProcessImage() {
+    if (_coroutine == null)
+      _coroutine = StartCoroutine(ProcessImage(_sourceTexture));
+  }
+
+  public void StopProcessImage() {
+    if (_coroutine != null)
+      StopCoroutine(_coroutine);
+    _coroutine = null;
   }
 
   public void OnDestroy() {
-    if (_coroutine != null)
-      StopCoroutine(_coroutine);
+    StopProcessImage();
   }
 
   private IEnumerator ProcessImage(Texture image) {
