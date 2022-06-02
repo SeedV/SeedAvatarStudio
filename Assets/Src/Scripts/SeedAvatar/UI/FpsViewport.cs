@@ -20,7 +20,12 @@ using UnityEngine.UI;
 namespace SeedAvatar {
   public class FpsViewport : MonoBehaviour {
     public Text FpsLabel;
-    private float _updateInterval = 0.5F;
+    public int HighLevel = 20;
+    public int LowLevel = 15;
+    public Color HighColor = Color.green;
+    public Color MiddleColor = Color.yellow;
+    public Color LowColor = Color.red;
+    public float UpdateInterval = 0.5F;
     private float _lastInterval;
     private int _frameCount;
 
@@ -31,12 +36,12 @@ namespace SeedAvatar {
 
     void Update() {
       ++_frameCount;
-      if (Time.realtimeSinceStartup > _lastInterval + _updateInterval) {
+      if (Time.realtimeSinceStartup > _lastInterval + UpdateInterval) {
         float fps = _frameCount / (Time.realtimeSinceStartup - _lastInterval);
         _frameCount = 0;
         _lastInterval = Time.realtimeSinceStartup;
-        FpsLabel.text = "fps:" + fps.ToString("f2");//#0.00
-        FpsLabel.color = fps >= 20 ? Color.green : (fps > 15 ? Color.yellow : Color.red);
+        FpsLabel.text = string.Format("fps: {0:0.##}", fps);//#0.00
+        FpsLabel.color = fps >= HighLevel ? HighColor : (fps > LowLevel ? MiddleColor : LowColor);
       }
     }
   }
