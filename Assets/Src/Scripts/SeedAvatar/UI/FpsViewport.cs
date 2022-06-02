@@ -1,3 +1,4 @@
+using System.Diagnostics;
 // Copyright 2021-2022 The SeedV Lab.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,6 +33,11 @@ namespace SeedAvatar {
     void Start() {
       _lastInterval = Time.realtimeSinceStartup;
       _frameCount = 0;
+      if (FpsLabel == null) {
+        GameObject newText = new GameObject("FpsText", typeof(Text));
+        newText.transform.SetParent(gameObject.transform);
+        FpsLabel = newText.GetComponent<Text>();
+      }
     }
 
     void Update() {
