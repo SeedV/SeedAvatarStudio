@@ -1,4 +1,3 @@
-using System.Diagnostics;
 // Copyright 2021-2022 The SeedV Lab.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,7 +19,6 @@ using UnityEngine.UI;
 
 namespace SeedAvatar {
   public class FpsViewport : MonoBehaviour {
-    public Text FpsLabel;
     public int HighLevel = 20;
     public int LowLevel = 15;
     public Color HighColor = Color.green;
@@ -29,15 +27,12 @@ namespace SeedAvatar {
     public float UpdateInterval = 0.5F;
     private float _lastInterval;
     private int _frameCount;
+    private Text _fpsLabel;
 
     void Start() {
       _lastInterval = Time.realtimeSinceStartup;
       _frameCount = 0;
-      if (FpsLabel == null) {
-        GameObject newText = new GameObject("FpsText", typeof(Text));
-        newText.transform.SetParent(gameObject.transform);
-        FpsLabel = newText.GetComponent<Text>();
-      }
+      _fpsLabel = GetComponent<Text>();
     }
 
     void Update() {
@@ -46,8 +41,8 @@ namespace SeedAvatar {
         float fps = _frameCount / (Time.realtimeSinceStartup - _lastInterval);
         _frameCount = 0;
         _lastInterval = Time.realtimeSinceStartup;
-        FpsLabel.text = string.Format("fps: {0:0.##}", fps);//#0.00
-        FpsLabel.color = fps >= HighLevel ? HighColor : (fps > LowLevel ? MiddleColor : LowColor);
+        _fpsLabel.text = string.Format("fps: {0:0.##}", fps);//#0.00
+        _fpsLabel.color = fps >= HighLevel ? HighColor : (fps > LowLevel ? MiddleColor : LowColor);
       }
     }
   }
