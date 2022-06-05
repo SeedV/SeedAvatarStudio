@@ -12,129 +12,113 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.InteropServices;
-
 using Mediapipe;
 using Mediapipe.Unity;
 using UnityEngine;
-using Color = UnityEngine.Color;
 
-// <summary>An animator to visualize upper body and face.</summary>
-public class UpperBodyAnimator : MonoBehaviour {
-  [Tooltip("Reference to MTH_DEF game object in UnityChan model.")]
-  public SkinnedMeshRenderer MthDefRef;
-  [Tooltip("Max rotation angle in degree.")]
-  [Range(0, 45f)]
-  public float MaxRotationThreshold = 40f;
-  [Tooltip("Screen width used as to scale the recognized normalized landmarks.")]
-  public float ScreenWidth = 1920;
-  [Tooltip("Screen height used as to scale the recognized normalized landmarks.")]
-  public float ScreenHeight = 1080;
-  /// <summary>The last detection of face landmarks, set by OnFaceLandmarksOutput.</summary>
-  private NormalizedLandmarkList _faceLandmarks;
-  /// <summary>The computed mouth aspect ratio.</summary>
-  [Range(0.0f, 1.0f)]
-  private float _mar = 0;
-  /// <summary>The computed mouth distance.</summary>
-  private float _mouthDistance = 0;
-  /// <summary>The neck joint to control head rotation.</summary>
-  private Transform _neck;
-  /// <summary>The init quaternion of the model facing front.</summary>
-  private Quaternion _initQuaternion;
-  /// <summary>The rotation vector for SolvePnP.</summary>
-  private float[] _rotationVector = null;
-  /// <summary>The translation vector for SolvePnP.</summary>
-  private float[] _translationVector = new float[3];
-  /// <summary>
-  /// Canonical face model from
-  /// https://github.com/google/mediapipe/blob/master/mediapipe/modules/face_geometry/data/canonical_face_model.obj
-  /// </summary>
-  private float[] _face3DPoints;
+namespace SeedUnityVRKit {
+  // <summary>An animator to visualize upper body and face.</summary>
+  public class UpperBodyAnimator : MonoBehaviour {
+    [Tooltip("Reference to MTH_DEF game object in UnityChan model.")]
+    public SkinnedMeshRenderer MthDefRef;
+    [Tooltip("Max rotation angle in degree.")]
+    [Range(0, 45f)]
+    public float MaxRotationThreshold = 40f;
+    [Tooltip("Screen width used as to scale the recognized normalized landmarks.")]
+    public float ScreenWidth = 1920;
+    [Tooltip("Screen height used as to scale the recognized normalized landmarks.")]
+    public float ScreenHeight = 1080;
+    /// <summary>The neck joint to control head rotation.</summary>
+    private Transform _neck;
+    /// <summary>Face landmark recognizer.</summary>
+    private FaceLandmarksRecognizer _faceLandmarksRecognizer;
+    private NormalizedLandmarkList _faceLandmarkList;
+    /// <summary>Pose landmark recognizer.</summary>
+    private PoseLandmarksRecognizer _poseLandmarksRecognizer;
+    private NormalizedLandmarkList _poseLandmarkList;
 
-  [DllImport("opencvplugin")]
-  private static extern void solvePnP(float width, float height, float[] objectPointsArray,
-                                      float[] imagePointsArray, float[] cameraMatrixArray,
-                                      float[] distCoeffsArray, float[] rvec, float[] tvec,
-                                      bool useExtrinsicGuess);
+    private Joint[] _joints = new Joint[Landmarks.Total];
 
-  void Start() {
-    var anim = GetComponent<Animator>();
+    void Start() {
+      var anim = GetComponent<Animator>();
 
-    _neck = anim.GetBoneTransform(HumanBodyBones.Neck);
-    _initQuaternion = _neck.rotation;
-    _face3DPoints = readFace3DPoints();
-  }
-
-  void LateUpdate() {
-    if (_faceLandmarks != null) {
-      IList<Vector2> faceMesh = new List<Vector2>();
-      IList<float> pnp = new List<float>();
-      foreach (var landmark in _faceLandmarks.Landmark) {
-        faceMesh.Add(new Vector2(landmark.X, landmark.Y));
-        pnp.Add(landmark.X * ScreenWidth);
-        pnp.Add(landmark.Y * ScreenHeight);
-      }
-      float[] pnpArray = new float[pnp.Count];
-      pnp.CopyTo(pnpArray, 0);
-      bool useExtrinsicGuess = (_rotationVector != null);
-      if (_rotationVector == null) {
-        _rotationVector = new float[3];
-      }
-
-      solvePnP(ScreenWidth, ScreenHeight, _face3DPoints, pnpArray, null, null, _rotationVector,
-               _translationVector, useExtrinsicGuess);
-
-      var roll = Mathf.Clamp((float)-Degree(_rotationVector[0]), -MaxRotationThreshold,
-                             MaxRotationThreshold);
-      var yaw = (float)(Degree(_rotationVector[1]) + 180);
-      var pitch = Mathf.Clamp((float)Degree(_rotationVector[2]), -MaxRotationThreshold,
-                              MaxRotationThreshold);
-      _neck.rotation = Quaternion.Euler(pitch, yaw, roll) * _initQuaternion;
-
-      ComputeMouth(faceMesh);
-      SetMouth(_mar * 100);
+      setupJoints(anim);
+      _neck = anim.GetBoneTransform(HumanBodyBones.Neck);
+      _faceLandmarksRecognizer = new FaceLandmarksRecognizer(ScreenWidth, ScreenHeight);
+      _poseLandmarksRecognizer = new PoseLandmarksRecognizer(ScreenWidth, ScreenHeight);
     }
-  }
 
-  private float Degree(float radian) {
-    return 180.0f / (float)Math.PI * radian;
-  }
+    private void setupJoints(Animator anim) {
+      // Right Arm
+      _joints[Landmarks.RightShoulder] =
+          new Joint(anim.GetBoneTransform(HumanBodyBones.RightUpperArm));
+      _joints[Landmarks.RightElbow] =
+          new Joint(anim.GetBoneTransform(HumanBodyBones.RightLowerArm));
+      _joints[Landmarks.RightWrist] = new Joint(anim.GetBoneTransform(HumanBodyBones.RightHand));
 
-  private void SetMouth(float ratio) {
-    MthDefRef.SetBlendShapeWeight(2, ratio);
-  }
+      // Left Arm
+      _joints[Landmarks.LeftShoulder] =
+          new Joint(anim.GetBoneTransform(HumanBodyBones.LeftUpperArm));
+      _joints[Landmarks.LeftElbow] = new Joint(anim.GetBoneTransform(HumanBodyBones.LeftLowerArm));
+      _joints[Landmarks.LeftWrist] = new Joint(anim.GetBoneTransform(HumanBodyBones.LeftHand));
 
-  public void OnFaceLandmarksOutput(object stream,
-                                    OutputEventArgs<NormalizedLandmarkList> eventArgs) {
-    _faceLandmarks = eventArgs.value;
-  }
+      // Hip
+      _joints[Landmarks.Hip] = new Joint(anim.GetBoneTransform(HumanBodyBones.Hips));
 
-  private void ComputeMouth(IList<Vector2> faceMesh) {
-    var p1 = faceMesh[78];
-    var p2 = faceMesh[81];
-    var p3 = faceMesh[13];
-    var p4 = faceMesh[311];
-    var p5 = faceMesh[308];
-    var p6 = faceMesh[402];
-    var p7 = faceMesh[14];
-    var p8 = faceMesh[178];
-    var mar = (float)((p2 - p8).magnitude + (p3 - p7).magnitude + (p4 - p6).magnitude);
-    _mouthDistance = (float)(p1 - p5).magnitude;
-    mar /= (float)(2 * _mouthDistance + 1e-6);
-    _mar = mar;
-  }
+      // Connections
+      // Right Arm
+      _joints[Landmarks.RightShoulder].Child = _joints[Landmarks.RightElbow];
+      _joints[Landmarks.RightElbow].Child = _joints[Landmarks.RightWrist];
+      _joints[Landmarks.RightElbow].Parent = _joints[Landmarks.RightShoulder];
 
-  private static float[] readFace3DPoints() {
-    TextAsset modelFile = Resources.Load<TextAsset>("face_model");
-    string[] data =
-        modelFile.text.Split(new char[] { '\n', '\r' }, StringSplitOptions.RemoveEmptyEntries);
-    float[] _face3DPoints = new float[data.Length];
-    for (int i = 0; i < data.Length; i++) {
-      _face3DPoints[i] = Convert.ToSingle(data[i]);
+      // Left Arm
+      _joints[Landmarks.LeftShoulder].Child = _joints[Landmarks.LeftElbow];
+      _joints[Landmarks.LeftElbow].Child = _joints[Landmarks.LeftWrist];
+      _joints[Landmarks.LeftElbow].Parent = _joints[Landmarks.LeftShoulder];
+
+      // Assuming body is always facing the -Z axis.
+      // In the future if we need to turn the upper body, we may revise this.
+      Vector3 forward = new Vector3(0, 0, -1);
+      foreach (Joint joint in _joints) {
+        if (joint != null && joint.Child != null) {
+          joint.Forward = Quaternion.LookRotation(joint.position - joint.Child.position, forward);
+        }
+      }
+      Joint hip = _joints[Landmarks.Hip];
+      hip.Forward = Quaternion.LookRotation(forward);
     }
-    return _face3DPoints;
+
+    void LateUpdate() {
+      if (_faceLandmarkList != null) {
+        FaceLandmarks faceLandmarks = _faceLandmarksRecognizer.recognize(_faceLandmarkList);
+        _neck.localEulerAngles = ClampFaceRotation(faceLandmarks.FaceRotation);
+        SetMouth(faceLandmarks.MouthAspectRatio);
+      }
+
+      if (_poseLandmarkList != null) {
+        foreach (PoseLandmark poseLandmark in _poseLandmarksRecognizer.recognize(
+                     _poseLandmarkList)) {
+          _joints[poseLandmark.Id].SetRotation(poseLandmark.Rotation);
+        }
+      }
+    }
+
+    private Vector3 ClampFaceRotation(Vector3 rotation) {
+      return new Vector3(rotation.x,  // Do not clamp x
+                         Mathf.Clamp(rotation.y, -MaxRotationThreshold, MaxRotationThreshold),
+                         Mathf.Clamp(rotation.z, -MaxRotationThreshold, MaxRotationThreshold));
+    }
+
+    private void SetMouth(float ratio) {
+      MthDefRef.SetBlendShapeWeight(2, ratio * 100);
+    }
+
+    public void OnFaceLandmarksOutput(NormalizedLandmarkList list) {
+      _faceLandmarkList = list;
+    }
+
+    public void OnPoseLandmarksOutput(NormalizedLandmarkList list) {
+      _poseLandmarkList = list;
+    }
   }
 }

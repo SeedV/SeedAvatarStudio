@@ -12,45 +12,67 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
 using System.Collections;
+using System.Collections.Generic;
 using Mediapipe;
 using Mediapipe.Unity;
 using Mediapipe.Unity.Holistic;
 using UnityEngine;
+using UnityEngine.Events;
 
-[RequireComponent(typeof(HolisticTrackingGraph))]
-public class HolisticTracker : BaseTracker {
-  [SerializeField]
-  private UpperBodyAnimator _modelAnimator = null;
+namespace SeedUnityVRKit {
+  [RequireComponent(typeof(HolisticTrackingGraph))]
+  public class HolisticTracker : BaseTracker {
+    public UnityEvent<NormalizedLandmarkList> FaceLandmarksOutputEvent;
+    public UnityEvent<NormalizedLandmarkList> PoseLandmarksOutputEvent;
+    public UnityEvent<NormalizedLandmarkList> LeftHandLandmarksOutputEvent;
+    public UnityEvent<NormalizedLandmarkList> RightHandLandmarksOutputEvent;
 
-  [SerializeField]
-  private HolisticLandmarkListAnnotationController _holisticAnnotationController;
+    private NormalizedLandmarkOutputSink _faceLandmarkOutputSink =
+        new NormalizedLandmarkOutputSink();
+    private NormalizedLandmarkOutputSink _poseLandmarkOutputSink =
+        new NormalizedLandmarkOutputSink();
+    private NormalizedLandmarkOutputSink _leftHandLandmarkOutputSink =
+        new NormalizedLandmarkOutputSink();
+    private NormalizedLandmarkOutputSink _rightHandLandmarkOutputSink =
+        new NormalizedLandmarkOutputSink();
 
-  public override void AddEventHandler() {
-    _graphRunner.OnFaceLandmarksOutput += OnFaceLandmarksOutput;
-    _graphRunner.OnFaceLandmarksOutput += _modelAnimator.OnFaceLandmarksOutput;
-    _graphRunner.OnPoseLandmarksOutput += OnPoseLandmarksOutput;
-    _graphRunner.OnLeftHandLandmarksOutput += OnLeftHandLandmarksOutput;
-    _graphRunner.OnRightHandLandmarksOutput += OnRightHandLandmarksOutput;
+    public void Update() {
+      _faceLandmarkOutputSink.Consume(e => FaceLandmarksOutputEvent.Invoke(e));
+      _poseLandmarkOutputSink.Consume(e => PoseLandmarksOutputEvent.Invoke(e));
+      _leftHandLandmarkOutputSink.Consume(e => LeftHandLandmarksOutputEvent.Invoke(e));
+      _rightHandLandmarkOutputSink.Consume(e => RightHandLandmarksOutputEvent.Invoke(e));
+    }
+
+    public override void AddEventHandler() {
+      _graphRunner.OnFaceLandmarksOutput += (stream, eventArgs) =>
+          _faceLandmarkOutputSink.Add(eventArgs.value);
+      _graphRunner.OnPoseLandmarksOutput += (stream, eventArgs) =>
+          _poseLandmarkOutputSink.Add(eventArgs.value);
+      _graphRunner.OnLeftHandLandmarksOutput += (stream, eventArgs) =>
+          _leftHandLandmarkOutputSink.Add(eventArgs.value);
+      _graphRunner.OnRightHandLandmarksOutput += (stream, eventArgs) =>
+          _rightHandLandmarkOutputSink.Add(eventArgs.value);
+    }
   }
 
-  private void OnFaceLandmarksOutput(object stream,
-                                     OutputEventArgs<NormalizedLandmarkList> eventArgs) {
-    _holisticAnnotationController.DrawFaceLandmarkListLater(eventArgs.value);
-  }
-
-  private void OnPoseLandmarksOutput(object stream,
-                                     OutputEventArgs<NormalizedLandmarkList> eventArgs) {
-    _holisticAnnotationController.DrawPoseLandmarkListLater(eventArgs.value);
-  }
-
-  private void OnLeftHandLandmarksOutput(object stream,
-                                         OutputEventArgs<NormalizedLandmarkList> eventArgs) {
-    _holisticAnnotationController.DrawLeftHandLandmarkListLater(eventArgs.value);
-  }
-
-  private void OnRightHandLandmarksOutput(object stream,
-                                          OutputEventArgs<NormalizedLandmarkList> eventArgs) {
-    _holisticAnnotationController.DrawRightHandLandmarkListLater(eventArgs.value);
+  class NormalizedLandmarkOutputSink {
+    private List<NormalizedLandmarkList> _landmarkQueue = new List<NormalizedLandmarkList>();
+    public void Add(NormalizedLandmarkList landmark) {
+      lock (_landmarkQueue) {
+        _landmarkQueue.Add(landmark);
+      }
+    }
+    public void Consume(Action<NormalizedLandmarkList> invoke) {
+      if (_landmarkQueue.Count > 0) {
+        lock (_landmarkQueue) {
+          foreach (NormalizedLandmarkList e in _landmarkQueue) {
+            invoke(e);
+          }
+        }
+        _landmarkQueue.Clear();
+      }
+    }
   }
 }
