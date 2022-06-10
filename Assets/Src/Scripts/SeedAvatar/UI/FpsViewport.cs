@@ -24,25 +24,25 @@ namespace SeedAvatar {
     public Color HighColor = Color.green;
     public Color MiddleColor = Color.yellow;
     public Color LowColor = Color.red;
-    public float UpdateInterval = 0.5F;
-    private float _lastInterval;
-    private int _frameCount;
+    private int _frameCount = 0;
     private Text _fpsLabel;
 
     void Start() {
-      _lastInterval = Time.realtimeSinceStartup;
-      _frameCount = 0;
       _fpsLabel = GetComponent<Text>();
+      StartCoroutine(Loop());
     }
 
     void Update() {
       ++_frameCount;
-      if (Time.realtimeSinceStartup > _lastInterval + UpdateInterval) {
-        float fps = _frameCount / (Time.realtimeSinceStartup - _lastInterval);
-        _frameCount = 0;
-        _lastInterval = Time.realtimeSinceStartup;
-        _fpsLabel.text = string.Format("fps: {0:0.##}", fps);//#0.00
+    }
+
+    private IEnumerator Loop() {
+      while (true) {
+        yield return new WaitForSeconds(1);
+        int fps = _frameCount;
+        _fpsLabel.text = $"fps: {fps}";
         _fpsLabel.color = fps >= HighLevel ? HighColor : (fps > LowLevel ? MiddleColor : LowColor);
+        _frameCount = 0;
       }
     }
   }
