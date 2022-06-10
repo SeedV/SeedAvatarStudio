@@ -95,8 +95,8 @@ namespace SeedUnityVRKit {
       }
 
       if (_poseLandmarkList != null) {
-        foreach (PoseLandmark poseLandmark in _poseLandmarksRecognizer.recognize(
-                     _poseLandmarkList)) {
+        var poseLandmarks = _poseLandmarksRecognizer.recognize(_poseLandmarkList);
+        foreach (var poseLandmark in poseLandmarks) {
           _joints[poseLandmark.Id].SetRotation(poseLandmark.Rotation);
         }
       }
