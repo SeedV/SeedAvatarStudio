@@ -19,8 +19,6 @@ using UnityEngine;
 namespace SeedUnityVRKit {
   // <summary>An animator to visualize upper body and face.</summary>
   public class AvatarAnimator : MonoBehaviour {
-    //[Tooltip("Reference to MTH_DEF game object in UnityChan model.")]
-    //public SkinnedMeshRenderer MthDefRef;
     public FaceController FaceControl;
     [Tooltip("Max rotation angle in degree.")]
     [Range(0, 45f)]
@@ -50,29 +48,29 @@ namespace SeedUnityVRKit {
     }
 
     private void setupJoints(Animator anim) {
-      // Right Arm
+      // Right Arm.
       _joints[Landmarks.RightShoulder] =
           new Joint(anim.GetBoneTransform(HumanBodyBones.RightUpperArm));
       _joints[Landmarks.RightElbow] =
           new Joint(anim.GetBoneTransform(HumanBodyBones.RightLowerArm));
       _joints[Landmarks.RightWrist] = new Joint(anim.GetBoneTransform(HumanBodyBones.RightHand));
 
-      // Left Arm
+      // Left Arm.
       _joints[Landmarks.LeftShoulder] =
           new Joint(anim.GetBoneTransform(HumanBodyBones.LeftUpperArm));
       _joints[Landmarks.LeftElbow] = new Joint(anim.GetBoneTransform(HumanBodyBones.LeftLowerArm));
       _joints[Landmarks.LeftWrist] = new Joint(anim.GetBoneTransform(HumanBodyBones.LeftHand));
 
-      // Hip
+      // Hip.
       _joints[Landmarks.Hip] = new Joint(anim.GetBoneTransform(HumanBodyBones.Hips));
 
-      // Connections
-      // Right Arm
+      // Connections.
+      // Right Arm.
       _joints[Landmarks.RightShoulder].Child = _joints[Landmarks.RightElbow];
       _joints[Landmarks.RightElbow].Child = _joints[Landmarks.RightWrist];
       _joints[Landmarks.RightElbow].Parent = _joints[Landmarks.RightShoulder];
 
-      // Left Arm
+      // Left Arm.
       _joints[Landmarks.LeftShoulder].Child = _joints[Landmarks.LeftElbow];
       _joints[Landmarks.LeftElbow].Child = _joints[Landmarks.LeftWrist];
       _joints[Landmarks.LeftElbow].Parent = _joints[Landmarks.LeftShoulder];
@@ -93,7 +91,6 @@ namespace SeedUnityVRKit {
       if (_faceLandmarkList != null) {
         FaceLandmarks faceLandmarks = _faceLandmarksRecognizer.recognize(_faceLandmarkList);
         _neck.localEulerAngles = ClampFaceRotation(faceLandmarks.FaceRotation);
-        //SetMouth(faceLandmarks.MouthAspectRatio);
         FaceControl.SetMouth(faceLandmarks.MouthShape);
       }
 
@@ -106,13 +103,9 @@ namespace SeedUnityVRKit {
     }
 
     private Vector3 ClampFaceRotation(Vector3 rotation) {
-      return new Vector3(rotation.x,  // Do not clamp x
+      return new Vector3(rotation.x,  // Do not clamp x.
                          Mathf.Clamp(rotation.y, -MaxRotationThreshold, MaxRotationThreshold),
                          Mathf.Clamp(rotation.z, -MaxRotationThreshold, MaxRotationThreshold));
-    }
-
-    private void SetMouth(float ratio) {
-      //MthDefRef.SetBlendShapeWeight(2, ratio * 100);
     }
 
     public void OnFaceLandmarksOutput(NormalizedLandmarkList list) {

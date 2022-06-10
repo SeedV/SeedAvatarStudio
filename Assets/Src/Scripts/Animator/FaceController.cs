@@ -22,6 +22,7 @@ namespace SeedUnityVRKit {
     public GameObject MouthLarge;
     public GameObject EyesClose;
     public GameObject EyesOpen;
+    public GameObject Eyeslids;
 
     private void SetObjectVisible(GameObject obj, bool flag) {
       obj.SetActive(flag);
@@ -63,10 +64,12 @@ namespace SeedUnityVRKit {
         case (int)EyeShape.Close:
           SetObjectVisible(EyesClose, true);
           SetObjectVisible(EyesOpen, false);
+          SetObjectVisible(Eyeslids, false);
           break;
         case (int)EyeShape.Open:
           SetObjectVisible(EyesClose, false);
           SetObjectVisible(EyesOpen, true);
+          SetObjectVisible(Eyeslids, true);
           break;
         default:
           break;
