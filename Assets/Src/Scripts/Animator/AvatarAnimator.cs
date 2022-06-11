@@ -27,6 +27,7 @@ namespace SeedUnityVRKit {
     public float ScreenWidth = 1920;
     [Tooltip("Screen height used as to scale the recognized normalized landmarks.")]
     public float ScreenHeight = 1080;
+    private static readonly Quaternion _neckInitRotation = Quaternion.identity;
     /// <summary>The neck joint to control head rotation.</summary>
     private Transform _neck;
     /// <summary>Face landmark recognizer.</summary>
@@ -90,7 +91,7 @@ namespace SeedUnityVRKit {
     void LateUpdate() {
       if (_faceLandmarkList != null) {
         FaceLandmarks faceLandmarks = _faceLandmarksRecognizer.recognize(_faceLandmarkList);
-        _neck.localEulerAngles = ClampFaceRotation(faceLandmarks.FaceRotation);
+        _neck.rotation = faceLandmarks.FaceRotation * _neckInitRotation;
         FaceControl.SetMouth(faceLandmarks.MouthShape);
       }
 
