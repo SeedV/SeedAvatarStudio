@@ -19,8 +19,6 @@ using UnityEngine;
 namespace SeedUnityVRKit {
   // <summary>An animator to visualize upper body and face.</summary>
   public class UpperBodyAnimator : MonoBehaviour {
-    [Tooltip("Reference to MTH_DEF game object in UnityChan model.")]
-    public SkinnedMeshRenderer MthDefRef;
     [Tooltip("Max rotation angle in degree.")]
     [Range(0, 45f)]
     public float MaxRotationThreshold = 40f;
@@ -28,6 +26,10 @@ namespace SeedUnityVRKit {
     public float ScreenWidth = 1920;
     [Tooltip("Screen height used as to scale the recognized normalized landmarks.")]
     public float ScreenHeight = 1080;
+    private const string MthDefConst = "MTH_DEF";
+    private const string EyeDefConst = "EYE_DEF";
+    private const string ElDefConst = "EL_DEF";
+    private static readonly Quaternion _neckInitRotation = Quaternion.Euler(0, -90, -90);
     /// <summary>The neck joint to control head rotation.</summary>
     private Transform _neck;
     /// <summary>Face landmark recognizer.</summary>
@@ -36,6 +38,9 @@ namespace SeedUnityVRKit {
     /// <summary>Pose landmark recognizer.</summary>
     private PoseLandmarksRecognizer _poseLandmarksRecognizer;
     private NormalizedLandmarkList _poseLandmarkList;
+    private SkinnedMeshRenderer _mouthMeshRenderer;
+    private SkinnedMeshRenderer _eyeMeshRenderer;
+    private SkinnedMeshRenderer _elMeshRenderer;
 
     private Joint[] _joints = new Joint[Landmarks.Total];
 
@@ -46,6 +51,9 @@ namespace SeedUnityVRKit {
       _neck = anim.GetBoneTransform(HumanBodyBones.Neck);
       _faceLandmarksRecognizer = new FaceLandmarksRecognizer(ScreenWidth, ScreenHeight);
       _poseLandmarksRecognizer = new PoseLandmarksRecognizer(ScreenWidth, ScreenHeight);
+      _mouthMeshRenderer = GameObject.Find(MthDefConst).GetComponent<SkinnedMeshRenderer>();
+      _eyeMeshRenderer = GameObject.Find(EyeDefConst).GetComponent<SkinnedMeshRenderer>();
+      _elMeshRenderer = GameObject.Find(ElDefConst).GetComponent<SkinnedMeshRenderer>();
     }
 
     private void setupJoints(Animator anim) {
@@ -91,8 +99,10 @@ namespace SeedUnityVRKit {
     void LateUpdate() {
       if (_faceLandmarkList != null) {
         FaceLandmarks faceLandmarks = _faceLandmarksRecognizer.recognize(_faceLandmarkList);
-        _neck.localEulerAngles = ClampFaceRotation(faceLandmarks.FaceRotation);
+        _neck.rotation = faceLandmarks.FaceRotation * _neckInitRotation;
         SetMouth(faceLandmarks.MouthAspectRatio);
+        SetEye(faceLandmarks.LeftEyeShape == EyeShape.Close &&
+               faceLandmarks.RightEyeShape == EyeShape.Close);
       }
 
       if (_poseLandmarkList != null) {
@@ -103,14 +113,18 @@ namespace SeedUnityVRKit {
       }
     }
 
-    private Vector3 ClampFaceRotation(Vector3 rotation) {
-      return new Vector3(rotation.x,  // Do not clamp x
-                         Mathf.Clamp(rotation.y, -MaxRotationThreshold, MaxRotationThreshold),
-                         Mathf.Clamp(rotation.z, -MaxRotationThreshold, MaxRotationThreshold));
+    private void SetMouth(float ratio) {
+      _mouthMeshRenderer.SetBlendShapeWeight(2, ratio * 100);
     }
 
-    private void SetMouth(float ratio) {
-      MthDefRef.SetBlendShapeWeight(2, ratio * 100);
+    private void SetEye(bool close) {
+      if (close) {
+        _eyeMeshRenderer.SetBlendShapeWeight(6, 100);
+        _elMeshRenderer.SetBlendShapeWeight(6, 100);
+      } else {
+        _eyeMeshRenderer.SetBlendShapeWeight(6, 0);
+        _elMeshRenderer.SetBlendShapeWeight(6, 0);
+      }
     }
 
     public void OnFaceLandmarksOutput(NormalizedLandmarkList list) {
