@@ -23,58 +23,50 @@ namespace SeedUnityVRKit {
     public GameObject EyesClose;
     public GameObject EyesOpen;
     public GameObject Eyeslids;
+    private const string MthDefConst = "MTH_DEF";
+    private const string EyeDefConst = "EYE_DEF";
+    private const string ElDefConst = "EL_DEF";
+    private SkinnedMeshRenderer _mouthMeshRenderer;
+    private SkinnedMeshRenderer _eyeMeshRenderer;
+    private SkinnedMeshRenderer _elMeshRenderer;
 
     private void SetObjectVisible(GameObject obj, bool flag) {
       obj.SetActive(flag);
     }
 
-    public void SetMouth(MouthShape mouthShape) {
-      switch (mouthShape) {
-        case MouthShape.Close:
-          SetObjectVisible(MouthClose, true);
-          SetObjectVisible(MouthSmall, false);
-          SetObjectVisible(MouthMid, false);
-          SetObjectVisible(MouthLarge, false);
-          break;
-        case MouthShape.Small:
-          SetObjectVisible(MouthClose, false);
-          SetObjectVisible(MouthSmall, true);
-          SetObjectVisible(MouthMid, false);
-          SetObjectVisible(MouthLarge, false);
-          break;
-        case MouthShape.Mid:
-          SetObjectVisible(MouthClose, false);
-          SetObjectVisible(MouthSmall, false);
-          SetObjectVisible(MouthMid, true);
-          SetObjectVisible(MouthLarge, false);
-          break;
-        case MouthShape.Large:
-          SetObjectVisible(MouthClose, false);
-          SetObjectVisible(MouthSmall, false);
-          SetObjectVisible(MouthMid, false);
-          SetObjectVisible(MouthLarge, true);
-          break;
-        default:
-          break;
+    public void SetMouth(MouthShape mouthShape, float ratio) {
+      if (_mouthMeshRenderer != null) {
+        _mouthMeshRenderer.SetBlendShapeWeight(2, ratio * 100);
+      } else {
+        SetObjectVisible(MouthClose, MouthShape.Close == mouthShape);
+        SetObjectVisible(MouthSmall, MouthShape.Small == mouthShape);
+        SetObjectVisible(MouthMid, MouthShape.Mid == mouthShape);
+        SetObjectVisible(MouthLarge, MouthShape.Large == mouthShape);
       }
+
     }
 
-    public void SetEyes(int eyeShape) {
-      switch (eyeShape) {
-        case (int)EyeShape.Close:
-          SetObjectVisible(EyesClose, true);
-          SetObjectVisible(EyesOpen, false);
-          SetObjectVisible(Eyeslids, false);
-          break;
-        case (int)EyeShape.Open:
-          SetObjectVisible(EyesClose, false);
-          SetObjectVisible(EyesOpen, true);
-          SetObjectVisible(Eyeslids, true);
-          break;
-        default:
-          break;
-
+    public void SetEyes(EyeShape eyeShape) {
+      if (_eyeMeshRenderer != null && _elMeshRenderer != null) {
+        if (eyeShape == EyeShape.Close) {
+          _eyeMeshRenderer.SetBlendShapeWeight(6, 100);
+          _elMeshRenderer.SetBlendShapeWeight(6, 100);
+        } else {
+          _eyeMeshRenderer.SetBlendShapeWeight(6, 0);
+          _elMeshRenderer.SetBlendShapeWeight(6, 0);
+        }
+      } else {
+        SetObjectVisible(EyesClose, EyeShape.Close == eyeShape);
+        SetObjectVisible(EyesOpen, EyeShape.Open == eyeShape);
+        SetObjectVisible(Eyeslids, EyeShape.Open == eyeShape);
       }
+
+    }
+
+    void Start() {
+      _mouthMeshRenderer = GameObject.Find(MthDefConst).GetComponent<SkinnedMeshRenderer>();
+      _eyeMeshRenderer = GameObject.Find(EyeDefConst).GetComponent<SkinnedMeshRenderer>();
+      _elMeshRenderer = GameObject.Find(ElDefConst).GetComponent<SkinnedMeshRenderer>();
     }
   }
 }

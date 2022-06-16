@@ -92,3 +92,5 @@ Thumbs.db
 UserSettings/Layouts/default-2021.dwlt
 
 VersionControlSettings.asset
+BurstAotSettings_iOS.json
+BurstAotSettings_WebGL.json
