@@ -17,7 +17,7 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: Eyelid
+      name: Eyelids
     second: {fileID: 2100000, guid: 525e136f16fbb4b008333afd70d9ec41, type: 2}
   - first:
       type: UnityEngine:Material
