@@ -170,8 +170,7 @@ namespace SeedAvatar {
       if (_webCam != null) {
         if (!_webCam.didUpdateThisFrame) return;
         bool vFlip = _webCam.videoVerticallyMirrored;
-        float ratio = 1920 / _width;
-        var scale = new Vector2(Flip ? -ratio : ratio, vFlip ? -ratio : ratio);
+        var scale = new Vector2(Flip ? -1 : 1, vFlip ? -1 : 1);
         var offset = new Vector2(Flip ? 1 : 0, vFlip ? 1 : 0);
         Graphics.Blit(_webCam, _buffer, scale, offset);
       }
