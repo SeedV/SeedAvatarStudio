@@ -86,7 +86,7 @@ namespace SeedUnityVRKit {
 
       // Assuming body is always facing the -Z axis.
       // In the future if we need to turn the upper body, we may revise this.
-      Vector3 forward = new Vector3(0, 0, -1);
+      Vector3 forward = new Vector3(0, 0, 0);
       foreach (Joint joint in _joints) {
         if (joint != null && joint.Child != null) {
           joint.Forward = Quaternion.LookRotation(joint.position - joint.Child.position, forward);
