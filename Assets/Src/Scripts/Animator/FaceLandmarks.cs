@@ -33,10 +33,10 @@ namespace SeedUnityVRKit {
     public Quaternion FaceRotation { get; set; }
     public MouthShape MouthShape {
       get {
-        if (MouthAspectRatio < 0.1) {
+        if (MouthAspectRatio < 0.25) {
           return MouthShape.Close;
         }
-        if (MouthAspectRatio < 0.25) {
+        if (MouthAspectRatio < 0.3) {
           return MouthShape.Small;
         }
         if (MouthAspectRatio < 0.4) {

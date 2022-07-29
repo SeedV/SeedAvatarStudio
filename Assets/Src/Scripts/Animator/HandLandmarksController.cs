@@ -56,10 +56,9 @@ namespace SeedUnityVRKit {
     }
 
     void Update() {
-      transform.position = _target.transform.position;
-      _target.rotation = ComputeWristRotation();
-
       if (HandLandmarkList != null) {
+        transform.position = _target.transform.position;
+        //_target.rotation = ComputeWristRotation();
         NormalizedLandmark landmark0 = HandLandmarkList.Landmark[0];
         NormalizedLandmark landmark1 = HandLandmarkList.Landmark[1];
         var s = _modelThumbLength / (ToVector(landmark1) - ToVector(landmark0)).magnitude;
