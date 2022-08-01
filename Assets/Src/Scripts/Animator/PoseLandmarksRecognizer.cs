@@ -39,47 +39,57 @@ namespace SeedUnityVRKit {
     }
 
     public PoseLandmarks recognize(NormalizedLandmarkList poseLandmarks) {
-      Vector3 leftHip = leftHip_kalmanFilter.Update(toVector(poseLandmarks.Landmark[Landmarks.LeftHip]));
-      Vector3 rightHip = rightHip_kalmanFilter.Update(toVector(poseLandmarks.Landmark[Landmarks.RightHip]));
-      Vector3 leftShoulder = leftShoulder_kalmanFilter.Update(toVector(poseLandmarks.Landmark[Landmarks.LeftShoulder]));
-      Vector3 leftElbow = leftElbow_kalmanFilter.Update(toVector(poseLandmarks.Landmark[Landmarks.LeftElbow]));
-      Vector3 leftWrist = leftWrist_kalmanFilter.Update(toVector(poseLandmarks.Landmark[Landmarks.LeftWrist]));
-      Vector3 rightShoulder = rightShoulder_kalmanFilter.Update(toVector(poseLandmarks.Landmark[Landmarks.RightShoulder]));
-      Vector3 rightElbow = rightElbow_kalmanFilter.Update(toVector(poseLandmarks.Landmark[Landmarks.RightElbow]));
-      Vector3 rightWrist = rightWrist_kalmanFilter.Update(toVector(poseLandmarks.Landmark[Landmarks.RightWrist]));
 
-      Vector3 forward = GetNormal(leftShoulder, leftHip, rightHip);
-
-      // Note: left and right are mirrored here.
       PoseLandmarks landmarks = new PoseLandmarks();
-      landmarks.Add(
-          new PoseLandmark { Id = Landmarks.Hip, Rotation = Quaternion.LookRotation(forward) });
-      landmarks.Add(new PoseLandmark {
-        Id = Landmarks.LeftShoulder,
-        Rotation = Quaternion.LookRotation(
-                                           rightShoulder - rightElbow, -forward)
-      });
-      landmarks.Add(new PoseLandmark {
-        Id = Landmarks.LeftElbow,
-        Rotation = Quaternion.LookRotation(
-                                           rightElbow - rightWrist, rightShoulder - rightElbow)
-      });
-      landmarks.Add(new PoseLandmark {
-        Id = Landmarks.RightShoulder,
-        Rotation = Quaternion.LookRotation(leftShoulder - leftElbow,
-                                                                          -forward)
-      });
-      landmarks.Add(new PoseLandmark {
-        Id = Landmarks.RightElbow,
-        Rotation = Quaternion.LookRotation(
-                                           leftElbow - leftWrist, leftShoulder - leftElbow)
-      });
+
+      if (getVisible(poseLandmarks.Landmark[Landmarks.LeftShoulder]) && getVisible(poseLandmarks.Landmark[Landmarks.RightShoulder])) {
+        Vector3 leftHip = leftHip_kalmanFilter.Update(toVector(poseLandmarks.Landmark[Landmarks.LeftHip]));
+        Vector3 rightHip = rightHip_kalmanFilter.Update(toVector(poseLandmarks.Landmark[Landmarks.RightHip]));
+        Vector3 leftShoulder = leftShoulder_kalmanFilter.Update(toVector(poseLandmarks.Landmark[Landmarks.LeftShoulder]));
+        Vector3 leftElbow = leftElbow_kalmanFilter.Update(toVector(poseLandmarks.Landmark[Landmarks.LeftElbow]));
+        Vector3 leftWrist = leftWrist_kalmanFilter.Update(toVector(poseLandmarks.Landmark[Landmarks.LeftWrist]));
+        Vector3 rightShoulder = rightShoulder_kalmanFilter.Update(toVector(poseLandmarks.Landmark[Landmarks.RightShoulder]));
+        Vector3 rightElbow = rightElbow_kalmanFilter.Update(toVector(poseLandmarks.Landmark[Landmarks.RightElbow]));
+        Vector3 rightWrist = rightWrist_kalmanFilter.Update(toVector(poseLandmarks.Landmark[Landmarks.RightWrist]));
+
+        Vector3 forward = GetNormal(leftShoulder, leftHip, rightHip);
+
+        // Note: left and right are mirrored here.
+
+        landmarks.Add(
+            new PoseLandmark { Id = Landmarks.Hip, Rotation = Quaternion.LookRotation(forward) });
+        landmarks.Add(new PoseLandmark {
+          Id = Landmarks.LeftShoulder,
+          Rotation = Quaternion.LookRotation(
+                                             rightShoulder - rightElbow, -forward)
+        });
+        landmarks.Add(new PoseLandmark {
+          Id = Landmarks.LeftElbow,
+          Rotation = Quaternion.LookRotation(
+                                             rightElbow - rightWrist, rightShoulder - rightElbow)
+        });
+        landmarks.Add(new PoseLandmark {
+          Id = Landmarks.RightShoulder,
+          Rotation = Quaternion.LookRotation(leftShoulder - leftElbow,
+                                                                            -forward)
+        });
+        landmarks.Add(new PoseLandmark {
+          Id = Landmarks.RightElbow,
+          Rotation = Quaternion.LookRotation(
+                                             leftElbow - leftWrist, leftShoulder - leftElbow)
+        });
+      }
+
       return landmarks;
     }
 
     private Vector3 toVector(NormalizedLandmark landmark) {
       return new Vector3(landmark.X * _screenWidth, landmark.Y * _screenHeight,
                          landmark.Z * _screenWidth * _zScale);
+    }
+
+    private bool getVisible(NormalizedLandmark landmark) {
+      return landmark.Visibility > 0.9F;
     }
 
     // <summary>

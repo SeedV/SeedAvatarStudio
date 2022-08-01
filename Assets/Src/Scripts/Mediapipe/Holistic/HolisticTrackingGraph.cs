@@ -12,12 +12,9 @@ using UnityEngine;
 
 using Google.Protobuf;
 
-namespace Mediapipe.Unity.Holistic
-{
-  public class HolisticTrackingGraph : GraphRunner
-  {
-    public enum ModelComplexity
-    {
+namespace Mediapipe.Unity.Holistic {
+  public class HolisticTrackingGraph : GraphRunner {
+    public enum ModelComplexity {
       Lite = 0,
       Full = 1,
       Heavy = 2,
@@ -27,58 +24,49 @@ namespace Mediapipe.Unity.Holistic
     public ModelComplexity modelComplexity = ModelComplexity.Lite;
     public bool smoothLandmarks = true;
 
-    private float _minDetectionConfidence = 0.5f;
-    public float minDetectionConfidence
-    {
+    private float _minDetectionConfidence = 0.3f;
+    public float minDetectionConfidence {
       get => _minDetectionConfidence;
       set => _minDetectionConfidence = Mathf.Clamp01(value);
     }
 
-    private float _minTrackingConfidence = 0.5f;
-    public float minTrackingConfidence
-    {
+    private float _minTrackingConfidence = 0.3f;
+    public float minTrackingConfidence {
       get => _minTrackingConfidence;
       set => _minTrackingConfidence = Mathf.Clamp01(value);
     }
 
-    public event EventHandler<OutputEventArgs<Detection>> OnPoseDetectionOutput
-    {
+    public event EventHandler<OutputEventArgs<Detection>> OnPoseDetectionOutput {
       add => _poseDetectionStream.AddListener(value);
       remove => _poseDetectionStream.RemoveListener(value);
     }
 
-    public event EventHandler<OutputEventArgs<NormalizedLandmarkList>> OnPoseLandmarksOutput
-    {
+    public event EventHandler<OutputEventArgs<NormalizedLandmarkList>> OnPoseLandmarksOutput {
       add => _poseLandmarksStream.AddListener(value);
       remove => _poseLandmarksStream.RemoveListener(value);
     }
 
-    public event EventHandler<OutputEventArgs<NormalizedLandmarkList>> OnFaceLandmarksOutput
-    {
+    public event EventHandler<OutputEventArgs<NormalizedLandmarkList>> OnFaceLandmarksOutput {
       add => _faceLandmarksStream.AddListener(value);
       remove => _faceLandmarksStream.RemoveListener(value);
     }
 
-    public event EventHandler<OutputEventArgs<NormalizedLandmarkList>> OnLeftHandLandmarksOutput
-    {
+    public event EventHandler<OutputEventArgs<NormalizedLandmarkList>> OnLeftHandLandmarksOutput {
       add => _leftHandLandmarksStream.AddListener(value);
       remove => _leftHandLandmarksStream.RemoveListener(value);
     }
 
-    public event EventHandler<OutputEventArgs<NormalizedLandmarkList>> OnRightHandLandmarksOutput
-    {
+    public event EventHandler<OutputEventArgs<NormalizedLandmarkList>> OnRightHandLandmarksOutput {
       add => _rightHandLandmarksStream.AddListener(value);
       remove => _rightHandLandmarksStream.RemoveListener(value);
     }
 
-    public event EventHandler<OutputEventArgs<LandmarkList>> OnPoseWorldLandmarksOutput
-    {
+    public event EventHandler<OutputEventArgs<LandmarkList>> OnPoseWorldLandmarksOutput {
       add => _poseWorldLandmarksStream.AddListener(value);
       remove => _poseWorldLandmarksStream.RemoveListener(value);
     }
 
-    public event EventHandler<OutputEventArgs<NormalizedRect>> OnPoseRoiOutput
-    {
+    public event EventHandler<OutputEventArgs<NormalizedRect>> OnPoseRoiOutput {
       add => _poseRoiStream.AddListener(value);
       remove => _poseRoiStream.RemoveListener(value);
     }
@@ -100,10 +88,8 @@ namespace Mediapipe.Unity.Holistic
     private OutputStream<LandmarkListPacket, LandmarkList> _poseWorldLandmarksStream;
     private OutputStream<NormalizedRectPacket, NormalizedRect> _poseRoiStream;
 
-    public override void StartRun(ImageSource imageSource)
-    {
-      if (runningMode.IsSynchronous())
-      {
+    public override void StartRun(ImageSource imageSource) {
+      if (runningMode.IsSynchronous()) {
         _poseDetectionStream.StartPolling().AssertOk();
         _poseLandmarksStream.StartPolling().AssertOk();
         _faceLandmarksStream.StartPolling().AssertOk();
@@ -115,8 +101,7 @@ namespace Mediapipe.Unity.Holistic
       StartRun(BuildSidePacket(imageSource));
     }
 
-    public override void Stop()
-    {
+    public override void Stop() {
       _poseDetectionStream.RemoveAllListeners();
       _poseDetectionStream = null;
       _poseLandmarksStream.RemoveAllListeners();
@@ -134,14 +119,12 @@ namespace Mediapipe.Unity.Holistic
       base.Stop();
     }
 
-    public void AddTextureFrameToInputStream(TextureFrame textureFrame)
-    {
+    public void AddTextureFrameToInputStream(TextureFrame textureFrame) {
       AddTextureFrameToInputStream(_InputStreamName, textureFrame);
     }
 
     public bool TryGetNext(out Detection poseDetection, out NormalizedLandmarkList poseLandmarks, out NormalizedLandmarkList faceLandmarks, out NormalizedLandmarkList leftHandLandmarks,
-                           out NormalizedLandmarkList rightHandLandmarks, out LandmarkList poseWorldLandmarks, out NormalizedRect poseRoi, bool allowBlock = true)
-    {
+                           out NormalizedLandmarkList rightHandLandmarks, out LandmarkList poseWorldLandmarks, out NormalizedRect poseRoi, bool allowBlock = true) {
       var currentTimestampMicrosec = GetCurrentTimestampMicrosec();
       var r1 = TryGetNext(_poseDetectionStream, out poseDetection, allowBlock, currentTimestampMicrosec);
       var r2 = TryGetNext(_poseLandmarksStream, out poseLandmarks, allowBlock, currentTimestampMicrosec);
@@ -154,8 +137,7 @@ namespace Mediapipe.Unity.Holistic
       return r1 || r2 || r3 || r4 || r5 || r6 || r7;
     }
 
-    protected override IList<WaitForResult> RequestDependentAssets()
-    {
+    protected override IList<WaitForResult> RequestDependentAssets() {
       return new List<WaitForResult> {
         WaitForAsset("face_detection_short_range.bytes"),
         WaitForAsset(refineFaceLandmarks ? "face_landmark_with_attention.bytes" : "face_landmark.bytes"),
@@ -169,10 +151,8 @@ namespace Mediapipe.Unity.Holistic
       };
     }
 
-    private WaitForResult WaitForPoseLandmarkModel()
-    {
-      switch (modelComplexity)
-      {
+    private WaitForResult WaitForPoseLandmarkModel() {
+      switch (modelComplexity) {
         case ModelComplexity.Lite: return WaitForAsset("pose_landmark_lite.bytes");
         case ModelComplexity.Full: return WaitForAsset("pose_landmark_full.bytes");
         case ModelComplexity.Heavy: return WaitForAsset("pose_landmark_heavy.bytes");
@@ -180,10 +160,8 @@ namespace Mediapipe.Unity.Holistic
       }
     }
 
-    protected override Status ConfigureCalculatorGraph(CalculatorGraphConfig config)
-    {
-      if (runningMode == RunningMode.NonBlockingSync)
-      {
+    protected override Status ConfigureCalculatorGraph(CalculatorGraphConfig config) {
+      if (runningMode == RunningMode.NonBlockingSync) {
         _poseDetectionStream = new OutputStream<DetectionPacket, Detection>(
             calculatorGraph, _PoseDetectionStreamName, config.AddPacketPresenceCalculator(_PoseDetectionStreamName), timeoutMicrosec);
         _poseLandmarksStream = new OutputStream<NormalizedLandmarkListPacket, NormalizedLandmarkList>(
@@ -198,9 +176,7 @@ namespace Mediapipe.Unity.Holistic
             calculatorGraph, _PoseWorldLandmarksStreamName, config.AddPacketPresenceCalculator(_PoseWorldLandmarksStreamName), timeoutMicrosec);
         _poseRoiStream = new OutputStream<NormalizedRectPacket, NormalizedRect>(
             calculatorGraph, _PoseRoiStreamName, config.AddPacketPresenceCalculator(_PoseRoiStreamName), timeoutMicrosec);
-      }
-      else
-      {
+      } else {
         _poseDetectionStream = new OutputStream<DetectionPacket, Detection>(calculatorGraph, _PoseDetectionStreamName, true, timeoutMicrosec);
         _poseLandmarksStream = new OutputStream<NormalizedLandmarkListPacket, NormalizedLandmarkList>(calculatorGraph, _PoseLandmarksStreamName, true, timeoutMicrosec);
         _faceLandmarksStream = new OutputStream<NormalizedLandmarkListPacket, NormalizedLandmarkList>(calculatorGraph, _FaceLandmarksStreamName, true, timeoutMicrosec);
@@ -210,8 +186,7 @@ namespace Mediapipe.Unity.Holistic
         _poseRoiStream = new OutputStream<NormalizedRectPacket, NormalizedRect>(calculatorGraph, _PoseRoiStreamName, true, timeoutMicrosec);
       }
 
-      using (var validatedGraphConfig = new ValidatedGraphConfig())
-      {
+      using (var validatedGraphConfig = new ValidatedGraphConfig()) {
         var status = validatedGraphConfig.Initialize(config);
 
         if (!status.Ok()) { return status; }
@@ -225,19 +200,15 @@ namespace Mediapipe.Unity.Holistic
         var poseTrackingCalculatorPattern = new Regex("tensorstoposelandmarksandsegmentation__ThresholdingCalculator$");
         var thresholdingCalculators = cannonicalizedConfig.Node.Where((node) => poseTrackingCalculatorPattern.Match(node.Name).Success).ToList();
 
-        foreach (var calculator in tensorsToDetectionsCalculators)
-        {
-          if (calculator.Options.HasExtension(TensorsToDetectionsCalculatorOptions.Extensions.Ext))
-          {
+        foreach (var calculator in tensorsToDetectionsCalculators) {
+          if (calculator.Options.HasExtension(TensorsToDetectionsCalculatorOptions.Extensions.Ext)) {
             var options = calculator.Options.GetExtension(TensorsToDetectionsCalculatorOptions.Extensions.Ext);
             options.MinScoreThresh = minDetectionConfidence;
           }
         }
 
-        foreach (var calculator in thresholdingCalculators)
-        {
-          if (calculator.Options.HasExtension(ThresholdingCalculatorOptions.Extensions.Ext))
-          {
+        foreach (var calculator in thresholdingCalculators) {
+          if (calculator.Options.HasExtension(ThresholdingCalculatorOptions.Extensions.Ext)) {
             var options = calculator.Options.GetExtension(ThresholdingCalculatorOptions.Extensions.Ext);
             options.Threshold = minTrackingConfidence;
           }
@@ -246,8 +217,7 @@ namespace Mediapipe.Unity.Holistic
       }
     }
 
-    private SidePacket BuildSidePacket(ImageSource imageSource)
-    {
+    private SidePacket BuildSidePacket(ImageSource imageSource) {
       var sidePacket = new SidePacket();
 
       SetImageTransformationOptions(sidePacket, imageSource);

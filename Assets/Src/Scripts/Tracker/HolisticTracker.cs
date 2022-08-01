@@ -69,9 +69,7 @@ namespace SeedUnityVRKit {
     private void OnPoseLandmarksOutput(object stream,
                                        OutputEventArgs<NormalizedLandmarkList> eventArgs) {
       NormalizedLandmarkList landmarkList = eventArgs.value;
-      if (landmarkList != null) {
-        _onPoseLandmarksOutputEvent?.Invoke(landmarkList);
-      }
+      _onPoseLandmarksOutputEvent?.Invoke(landmarkList);
     }
 
     private void OnLeftHandLandmarksOutput(object stream,
