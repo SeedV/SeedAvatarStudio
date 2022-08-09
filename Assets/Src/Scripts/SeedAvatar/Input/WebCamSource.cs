@@ -53,19 +53,19 @@ namespace SeedAvatar {
     private int _height = 720;
     private static readonly SortedDictionary<int, string> _resolutionDict =
         new SortedDictionary<int, string> {
-          { (int)ResolutionOptions.LOW , "1280x720" },
+          { (int)ResolutionOptions.LOW, "1280x720" },
           { (int)ResolutionOptions.MIDDLE, "1600x900" },
-          { (int)ResolutionOptions.HIGH , "1920x1080" },
+          { (int)ResolutionOptions.HIGH, "1920x1080" },
         };
     private static readonly SortedDictionary<int, string> _fpsDict =
         new SortedDictionary<int, string> {
-          { (int)FpsOptions.LOW , "30Hz" },
-          { (int)FpsOptions.HIGH , "60Hz" },
+          { (int)FpsOptions.LOW, "30Hz" },
+          { (int)FpsOptions.HIGH, "60Hz" },
         };
     private static readonly SortedDictionary<int, string> _flipDict =
         new SortedDictionary<int, string> {
-          { (int)FlipOptions.NORMAL , "Normal" },
-          { (int)FlipOptions.MIRRORING , "Mirroring" },
+          { (int)FlipOptions.NORMAL, "Normal" },
+          { (int)FlipOptions.MIRRORING, "Mirroring" },
         };
     private SortedDictionary<int, string> _devicesDict = new SortedDictionary<int, string>();
 
