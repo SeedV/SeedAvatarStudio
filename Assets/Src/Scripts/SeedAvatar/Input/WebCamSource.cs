@@ -46,26 +46,27 @@ namespace SeedAvatar {
     public string DeviceName;
     public int Fps = 30;
     public bool Flip = false;
-    [SerializeField] private RenderTexture _buffer;
+    [SerializeField]
+    private RenderTexture _buffer;
     private WebCamTexture _webCam;
     private int _width = 1280;
     private int _height = 720;
     private static readonly SortedDictionary<int, string> _resolutionDict =
-    new SortedDictionary<int, string> {
-      { (int)ResolutionOptions.LOW , "1280x720" },
-      { (int)ResolutionOptions.MIDDLE, "1600x900" },
-      { (int)ResolutionOptions.HIGH , "1920x1080" },
-    };
+      new SortedDictionary<int, string> {
+        { (int)ResolutionOptions.LOW , "1280x720" },
+        { (int)ResolutionOptions.MIDDLE, "1600x900" },
+        { (int)ResolutionOptions.HIGH , "1920x1080" },
+      };
     private static readonly SortedDictionary<int, string> _fpsDict =
-    new SortedDictionary<int, string> {
-      { (int)FpsOptions.LOW , "30Hz" },
-      { (int)FpsOptions.HIGH , "60Hz" },
-    };
+      new SortedDictionary<int, string> {
+        { (int)FpsOptions.LOW , "30Hz" },
+        { (int)FpsOptions.HIGH , "60Hz" },
+      };
     private static readonly SortedDictionary<int, string> _flipDict =
-    new SortedDictionary<int, string> {
-      { (int)FlipOptions.NORMAL , "Normal" },
-      { (int)FlipOptions.MIRRORING , "Mirroring" },
-    };
+      new SortedDictionary<int, string> {
+        { (int)FlipOptions.NORMAL , "Normal" },
+        { (int)FlipOptions.MIRRORING , "Mirroring" },
+      };
     private SortedDictionary<int, string> _devicesDict = new SortedDictionary<int, string>();
 
     // Start button event.
@@ -139,9 +140,11 @@ namespace SeedAvatar {
       }
     }
 
-    private void InitDropdown(Dropdown target, SortedDictionary<int, string> optDict, UnityAction<int> onChangedCallback) {
+    private void InitDropdown(Dropdown target, SortedDictionary<int, string> optDict,
+                              UnityAction<int> onChangedCallback) {
       target.ClearOptions();
-      List<string> optStrings = optDict.Count == 0 ? new List<string>() : new List<string>(optDict.Values);
+      List<string> optStrings =
+          optDict.Count == 0 ? new List<string>() : new List<string>(optDict.Values);
       target.AddOptions(optStrings);
       target.value = 0;
       target.captionText.text = target.options[0].text;
@@ -168,7 +171,8 @@ namespace SeedAvatar {
 
     void Update() {
       if (_webCam != null) {
-        if (!_webCam.didUpdateThisFrame) return;
+        if (!_webCam.didUpdateThisFrame)
+          return;
         bool vFlip = _webCam.videoVerticallyMirrored;
         var scale = new Vector2(Flip ? -1 : 1, vFlip ? -1 : 1);
         var offset = new Vector2(Flip ? 1 : 0, vFlip ? 1 : 0);
