@@ -20,16 +20,18 @@ using UnityEngine.UI;
 namespace SeedAvatar {
   // This class is the UI header panel buttons click events script.
   public class HeaderButtonEvents : MonoBehaviour {
-
     // Animator trigger Param.
     private const string _animatorShow = "Show";
     // Animator trigger Param.
     private const string _animatorHide = "Hide";
-    [SerializeField] private GameObject _inputDialog;
+    [SerializeField]
+    private GameObject _inputDialog;
     // Header panel animator.
-    [SerializeField] private Animator _animatorHeader;
+    [SerializeField]
+    private Animator _animatorHeader;
     // Viewport panel animator.
-    [SerializeField] private Animator _animatorViewport;
+    [SerializeField]
+    private Animator _animatorViewport;
 
     // HideUI button click event.
     public void OnHideUI() {
@@ -49,16 +51,13 @@ namespace SeedAvatar {
     }
 
     // Play button click event.
-    public void OnPlay() {
-    }
+    public void OnPlay() {}
 
     // Stop button click event.
-    public void OnStop() {
-    }
+    public void OnStop() {}
 
     // Setting button click event.
-    public void OnSetting() {
-    }
+    public void OnSetting() {}
 
     // InputSetting button click event.
     public void OnInputSet() {
