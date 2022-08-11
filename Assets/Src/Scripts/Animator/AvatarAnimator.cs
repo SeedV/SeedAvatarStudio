@@ -43,5 +43,9 @@ namespace SeedUnityVRKit {
       SetObjectVisible(EyesOpen, !close);
       SetObjectVisible(Eyeslids, !close);
     }
+
+    public override void GetSpecialPart() {
+      //do no things
+    }
   }
 }

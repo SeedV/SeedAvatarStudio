@@ -51,9 +51,7 @@ namespace SeedUnityVRKit {
       _neck = anim.GetBoneTransform(HumanBodyBones.Neck);
       _faceLandmarksRecognizer = new FaceLandmarksRecognizer(ScreenWidth, ScreenHeight);
       _poseLandmarksRecognizer = new PoseLandmarksRecognizer(ScreenWidth, ScreenHeight);
-      _mouthMeshRenderer = GameObject.Find(MthDefConst).GetComponent<SkinnedMeshRenderer>();
-      _eyeMeshRenderer = GameObject.Find(EyeDefConst).GetComponent<SkinnedMeshRenderer>();
-      _elMeshRenderer = GameObject.Find(ElDefConst).GetComponent<SkinnedMeshRenderer>();
+      GetSpecialPart();
     }
 
     private void setupJoints(Animator anim) {
@@ -111,6 +109,12 @@ namespace SeedUnityVRKit {
           _joints[poseLandmark.Id].SetRotation(poseLandmark.Rotation);
         }
       }
+    }
+
+    public virtual void GetSpecialPart() {
+      _mouthMeshRenderer = GameObject.Find(MthDefConst).GetComponent<SkinnedMeshRenderer>();
+      _eyeMeshRenderer = GameObject.Find(EyeDefConst).GetComponent<SkinnedMeshRenderer>();
+      _elMeshRenderer = GameObject.Find(ElDefConst).GetComponent<SkinnedMeshRenderer>();
     }
 
     public virtual void SetMouth(FaceLandmarks faceLandmarks) {
