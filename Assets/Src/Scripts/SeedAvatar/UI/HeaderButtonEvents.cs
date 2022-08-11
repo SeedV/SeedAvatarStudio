@@ -66,9 +66,6 @@ namespace SeedAvatar {
       _stopButton.SetActive(false);
     }
 
-    // Setting button click event.
-    public void OnSetting() { }
-
     // InputSetting button click event.
     public void OnInputSet() {
       _inputDialog.SetActive(true);
