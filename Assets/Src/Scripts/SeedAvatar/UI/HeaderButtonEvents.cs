@@ -32,6 +32,10 @@ namespace SeedAvatar {
     // Viewport panel animator.
     [SerializeField]
     private Animator _animatorViewport;
+    [SerializeField]
+    private GameObject _startButton;
+    [SerializeField]
+    private GameObject _stopButton;
 
     // HideUI button click event.
     public void OnHideUI() {
@@ -51,13 +55,19 @@ namespace SeedAvatar {
     }
 
     // Play button click event.
-    public void OnPlay() {}
+    public void OnPlay() {
+      _startButton.SetActive(false);
+      _stopButton.SetActive(true);
+    }
 
     // Stop button click event.
-    public void OnStop() {}
+    public void OnStop() {
+      _startButton.SetActive(true);
+      _stopButton.SetActive(false);
+    }
 
     // Setting button click event.
-    public void OnSetting() {}
+    public void OnSetting() { }
 
     // InputSetting button click event.
     public void OnInputSet() {
