@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+using System;
+using System.Collections.Generic;
 using Mediapipe;
 using Mediapipe.Unity;
 using UnityEngine;
@@ -24,14 +26,17 @@ namespace SeedUnityVRKit {
     private readonly float _screenWidth;
     /// <summary>Screen height used as to scale the recognized normalized landmarks.</summary>
     private readonly float _screenHeight;
-    private KalmanFilter leftHip_kalmanFilter = new KalmanFilter(0.125f, 1f);
-    private KalmanFilter rightHip_kalmanFilter = new KalmanFilter(0.125f, 1f);
-    private KalmanFilter leftShoulder_kalmanFilter = new KalmanFilter(0.125f, 1f);
-    private KalmanFilter leftElbow_kalmanFilter = new KalmanFilter(0.125f, 1f);
-    private KalmanFilter leftWrist_kalmanFilter = new KalmanFilter(0.125f, 1f);
-    private KalmanFilter rightShoulder_kalmanFilter = new KalmanFilter(0.125f, 1f);
-    private KalmanFilter rightElbow_kalmanFilter = new KalmanFilter(0.125f, 1f);
-    private KalmanFilter rightWrist_kalmanFilter = new KalmanFilter(0.125f, 1f);
+    private static Dictionary<string, KalmanFilter> _filterDict =
+    new Dictionary<string, KalmanFilter> {
+      { "leftHip" , new KalmanFilter(0.125f, 1f) },
+      { "rightHip" , new KalmanFilter(0.125f, 1f) },
+      { "leftShoulder" , new KalmanFilter(0.125f, 1f) },
+      { "leftElbow" , new KalmanFilter(0.125f, 1f) },
+      { "leftWrist" , new KalmanFilter(0.125f, 1f) },
+      { "rightShoulder" , new KalmanFilter(0.125f, 1f) },
+      { "rightElbow" , new KalmanFilter(0.125f, 1f) },
+      { "rightWrist" , new KalmanFilter(0.125f, 1f) },
+    };
 
     public PoseLandmarksRecognizer(float screenWidth, float screenHeight) {
       _screenWidth = screenWidth;
@@ -42,15 +47,15 @@ namespace SeedUnityVRKit {
 
       PoseLandmarks landmarks = new PoseLandmarks();
 
-      if (getVisible(poseLandmarks.Landmark[Landmarks.LeftShoulder]) && getVisible(poseLandmarks.Landmark[Landmarks.RightShoulder])) {
-        Vector3 leftHip = leftHip_kalmanFilter.Update(toVector(poseLandmarks.Landmark[Landmarks.LeftHip]));
-        Vector3 rightHip = rightHip_kalmanFilter.Update(toVector(poseLandmarks.Landmark[Landmarks.RightHip]));
-        Vector3 leftShoulder = leftShoulder_kalmanFilter.Update(toVector(poseLandmarks.Landmark[Landmarks.LeftShoulder]));
-        Vector3 leftElbow = leftElbow_kalmanFilter.Update(toVector(poseLandmarks.Landmark[Landmarks.LeftElbow]));
-        Vector3 leftWrist = leftWrist_kalmanFilter.Update(toVector(poseLandmarks.Landmark[Landmarks.LeftWrist]));
-        Vector3 rightShoulder = rightShoulder_kalmanFilter.Update(toVector(poseLandmarks.Landmark[Landmarks.RightShoulder]));
-        Vector3 rightElbow = rightElbow_kalmanFilter.Update(toVector(poseLandmarks.Landmark[Landmarks.RightElbow]));
-        Vector3 rightWrist = rightWrist_kalmanFilter.Update(toVector(poseLandmarks.Landmark[Landmarks.RightWrist]));
+      if (isBodyVisibe(poseLandmarks)) {
+        Vector3 leftHip = _filterDict["leftHip"].Update(toVector(poseLandmarks.Landmark[Landmarks.LeftHip]));
+        Vector3 rightHip = _filterDict["rightHip"].Update(toVector(poseLandmarks.Landmark[Landmarks.RightHip]));
+        Vector3 leftShoulder = _filterDict["leftShoulder"].Update(toVector(poseLandmarks.Landmark[Landmarks.LeftShoulder]));
+        Vector3 leftElbow = _filterDict["leftElbow"].Update(toVector(poseLandmarks.Landmark[Landmarks.LeftElbow]));
+        Vector3 leftWrist = _filterDict["leftWrist"].Update(toVector(poseLandmarks.Landmark[Landmarks.LeftWrist]));
+        Vector3 rightShoulder = _filterDict["rightShoulder"].Update(toVector(poseLandmarks.Landmark[Landmarks.RightShoulder]));
+        Vector3 rightElbow = _filterDict["rightElbow"].Update(toVector(poseLandmarks.Landmark[Landmarks.RightElbow]));
+        Vector3 rightWrist = _filterDict["rightWrist"].Update(toVector(poseLandmarks.Landmark[Landmarks.RightWrist]));
 
         Vector3 forward = GetNormal(leftShoulder, leftHip, rightHip);
 
@@ -86,6 +91,11 @@ namespace SeedUnityVRKit {
     private Vector3 toVector(NormalizedLandmark landmark) {
       return new Vector3(landmark.X * _screenWidth, landmark.Y * _screenHeight,
                          landmark.Z * _screenWidth * _zScale);
+    }
+
+    private bool isBodyVisibe(NormalizedLandmarkList poseLandmarks) {
+      return getVisible(poseLandmarks.Landmark[Landmarks.LeftShoulder]) &&
+             getVisible(poseLandmarks.Landmark[Landmarks.RightShoulder]);
     }
 
     private bool getVisible(NormalizedLandmark landmark) {
