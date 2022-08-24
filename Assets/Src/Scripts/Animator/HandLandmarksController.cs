@@ -43,6 +43,7 @@ namespace SeedUnityVRKit {
     private GameObject[] _handLandmarks = new GameObject[_landmarksNum];
     private float _screenRatio = 1.0f;
     private Transform[] _fingerTargets = new Transform[15];
+    private KalmanFilter[] _kalmanFilters = new KalmanFilter[_landmarksNum];
     void Start() {
       // Note: HandPose use camera perspective to determine left and right hand, which is mirrored
       // from the animator's perspective.
@@ -53,6 +54,7 @@ namespace SeedUnityVRKit {
       for (int i = 0; i < _landmarksNum; i++) {
         _handLandmarks[i] = new GameObject($"HandLandmark{i}");
         _handLandmarks[i].transform.parent = transform;
+        _kalmanFilters[i] = new KalmanFilter(0.125f, 1f);
       }
       _screenRatio = 1.0f * ScreenWidth / ScreenHeight;
 
@@ -102,7 +104,7 @@ namespace SeedUnityVRKit {
         for (int i = 1; i < HandLandmarkList.Landmark.Count; i++) {
           NormalizedLandmark landmark = HandLandmarkList.Landmark[i];
           Vector3 tip = Vector3.Scale(ToVector(landmark) - ToVector(landmark0), scale);
-          _handLandmarks[i].transform.localPosition = tip;
+          _handLandmarks[i].transform.localPosition = _kalmanFilters[i].Update(tip);
         }
 
         _fingerTargets[0].rotation = Quaternion.LookRotation(_handLandmarks[2].transform.position - _handLandmarks[1].transform.position) * InitFingerRotation;
@@ -114,7 +116,7 @@ namespace SeedUnityVRKit {
         _fingerTargets[5].rotation = Quaternion.LookRotation(_handLandmarks[8].transform.position - _handLandmarks[7].transform.position) * InitFingerRotation;
 
         _fingerTargets[6].rotation = Quaternion.LookRotation(_handLandmarks[10].transform.position - _handLandmarks[9].transform.position) * InitFingerRotation;
-        _fingerTargets[7].rotation = Quaternion.LookRotation( _handLandmarks[11].transform.position - _handLandmarks[10].transform.position) * InitFingerRotation;
+        _fingerTargets[7].rotation = Quaternion.LookRotation(_handLandmarks[11].transform.position - _handLandmarks[10].transform.position) * InitFingerRotation;
         _fingerTargets[8].rotation = Quaternion.LookRotation(_handLandmarks[12].transform.position - _handLandmarks[11].transform.position) * InitFingerRotation;
 
         _fingerTargets[9].rotation = Quaternion.LookRotation(_handLandmarks[14].transform.position - _handLandmarks[13].transform.position) * InitFingerRotation;
