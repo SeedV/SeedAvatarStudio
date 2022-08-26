@@ -107,25 +107,7 @@ namespace SeedUnityVRKit {
           _handLandmarks[i].transform.localPosition = _kalmanFilters[i].Update(tip);
         }
 
-        _fingerTargets[0].rotation = Quaternion.LookRotation(_handLandmarks[2].transform.position - _handLandmarks[1].transform.position) * InitFingerRotation;
-        _fingerTargets[1].rotation = Quaternion.LookRotation(_handLandmarks[3].transform.position - _handLandmarks[2].transform.position) * InitFingerRotation;
-        _fingerTargets[2].rotation = Quaternion.LookRotation(_handLandmarks[4].transform.position - _handLandmarks[3].transform.position) * InitFingerRotation;
-
-        _fingerTargets[3].rotation = Quaternion.LookRotation(_handLandmarks[6].transform.position - _handLandmarks[5].transform.position) * InitFingerRotation;
-        _fingerTargets[4].rotation = Quaternion.LookRotation(_handLandmarks[7].transform.position - _handLandmarks[6].transform.position) * InitFingerRotation;
-        _fingerTargets[5].rotation = Quaternion.LookRotation(_handLandmarks[8].transform.position - _handLandmarks[7].transform.position) * InitFingerRotation;
-
-        _fingerTargets[6].rotation = Quaternion.LookRotation(_handLandmarks[10].transform.position - _handLandmarks[9].transform.position) * InitFingerRotation;
-        _fingerTargets[7].rotation = Quaternion.LookRotation(_handLandmarks[11].transform.position - _handLandmarks[10].transform.position) * InitFingerRotation;
-        _fingerTargets[8].rotation = Quaternion.LookRotation(_handLandmarks[12].transform.position - _handLandmarks[11].transform.position) * InitFingerRotation;
-
-        _fingerTargets[9].rotation = Quaternion.LookRotation(_handLandmarks[14].transform.position - _handLandmarks[13].transform.position) * InitFingerRotation;
-        _fingerTargets[10].rotation = Quaternion.LookRotation(_handLandmarks[15].transform.position - _handLandmarks[14].transform.position) * InitFingerRotation;
-        _fingerTargets[11].rotation = Quaternion.LookRotation(_handLandmarks[16].transform.position - _handLandmarks[15].transform.position) * InitFingerRotation;
-
-        _fingerTargets[12].rotation = Quaternion.LookRotation(_handLandmarks[18].transform.position - _handLandmarks[17].transform.position) * InitFingerRotation;
-        _fingerTargets[13].rotation = Quaternion.LookRotation(_handLandmarks[19].transform.position - _handLandmarks[18].transform.position) * InitFingerRotation;
-        _fingerTargets[14].rotation = Quaternion.LookRotation(_handLandmarks[20].transform.position - _handLandmarks[19].transform.position) * InitFingerRotation;
+        ComputeFingerRotation();
 
       }
     }
@@ -153,6 +135,36 @@ namespace SeedUnityVRKit {
         if (handLandmark != null)
           Gizmos.DrawSphere(handLandmark.transform.position, 0.005f);
       }
+    }
+
+    private void ComputeFingerRotation(){
+      _fingerTargets[0].rotation = Quaternion.LookRotation(_handLandmarks[2].transform.position - _handLandmarks[1].transform.position) * InitFingerRotation;
+      _fingerTargets[1].rotation = Quaternion.LookRotation(_handLandmarks[3].transform.position - _handLandmarks[2].transform.position) * InitFingerRotation;
+      _fingerTargets[2].rotation = Quaternion.LookRotation(ComputeIKFingerPosition(_handLandmarks[1].transform.position, _handLandmarks[2].transform.position, _handLandmarks[3].transform.position, _handLandmarks[4].transform.position)) * InitFingerRotation;
+
+      _fingerTargets[3].rotation = Quaternion.LookRotation(_handLandmarks[6].transform.position - _handLandmarks[5].transform.position) * InitFingerRotation;
+      _fingerTargets[4].rotation = Quaternion.LookRotation(_handLandmarks[7].transform.position - _handLandmarks[6].transform.position) * InitFingerRotation;
+      _fingerTargets[5].rotation = Quaternion.LookRotation(ComputeIKFingerPosition(_handLandmarks[5].transform.position, _handLandmarks[6].transform.position, _handLandmarks[7].transform.position, _handLandmarks[8].transform.position)) * InitFingerRotation;
+
+      _fingerTargets[6].rotation = Quaternion.LookRotation(_handLandmarks[10].transform.position - _handLandmarks[9].transform.position) * InitFingerRotation;
+      _fingerTargets[7].rotation = Quaternion.LookRotation(_handLandmarks[11].transform.position - _handLandmarks[10].transform.position) * InitFingerRotation;
+      _fingerTargets[8].rotation = Quaternion.LookRotation(ComputeIKFingerPosition(_handLandmarks[9].transform.position, _handLandmarks[10].transform.position, _handLandmarks[11].transform.position, _handLandmarks[12].transform.position)) * InitFingerRotation;
+
+      _fingerTargets[9].rotation = Quaternion.LookRotation(_handLandmarks[14].transform.position - _handLandmarks[13].transform.position) * InitFingerRotation;
+      _fingerTargets[10].rotation = Quaternion.LookRotation(_handLandmarks[15].transform.position - _handLandmarks[14].transform.position) * InitFingerRotation;
+      _fingerTargets[11].rotation = Quaternion.LookRotation(ComputeIKFingerPosition(_handLandmarks[13].transform.position, _handLandmarks[14].transform.position, _handLandmarks[15].transform.position, _handLandmarks[16].transform.position)) * InitFingerRotation;
+
+      _fingerTargets[12].rotation = Quaternion.LookRotation(_handLandmarks[18].transform.position - _handLandmarks[17].transform.position) * InitFingerRotation;
+      _fingerTargets[13].rotation = Quaternion.LookRotation(_handLandmarks[19].transform.position - _handLandmarks[18].transform.position) * InitFingerRotation;
+      _fingerTargets[14].rotation = Quaternion.LookRotation(ComputeIKFingerPosition(_handLandmarks[17].transform.position, _handLandmarks[18].transform.position, _handLandmarks[19].transform.position, _handLandmarks[20].transform.position)) * InitFingerRotation;
+    }
+
+    private Vector3 ComputeIKFingerPosition(Vector3 firstNode, Vector3 secondNode, Vector3 ThirdNode, Vector3 endNode){
+      Vector3 panelNormal = Vector3.Cross(secondNode - firstNode, ThirdNode - secondNode);
+
+      Vector3 preNode = Vector3.ProjectOnPlane(endNode-ThirdNode, panelNormal);
+
+      return preNode;
     }
 
     private Vector3 ToVector(NormalizedLandmark landmark) {
