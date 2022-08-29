@@ -161,14 +161,41 @@ namespace SeedUnityVRKit {
 
     private Vector3 ComputeIKFingerPosition(Vector3 firstNode, Vector3 secondNode, Vector3 ThirdNode, Vector3 endNode){
       Vector3 panelNormal = Vector3.Cross(secondNode - firstNode, ThirdNode - secondNode);
+      //Debug.Log("panel"+panelNormal);
 
       Vector3 preNode = Vector3.ProjectOnPlane(endNode-ThirdNode, panelNormal);
 
       return preNode;
     }
 
+    private Vector3 ComputeIKFingerRotation(Vector3 zeroV ,Vector3 firstV, Vector3 secondV, Vector3 thirdV, int outPutType) {
+      Vector3 panelNormalZ = Vector3.Cross(zeroV.normalized, firstV.normalized);
+      Vector3 panelNormalF = Vector3.Cross(firstV.normalized, secondV.normalized);
+      Vector3 secondNode = secondV;
+      if(Vector3.Angle(panelNormalZ,panelNormalF) > 90.0f){
+        Vector3 refNodeS = Vector3.Reflect(secondV,firstV);
+        secondNode = new Vector3(-refNodeS.x, -refNodeS.y, -refNodeS.z);
+      }
+      Vector3 panelNormalNF = Vector3.Cross(firstV.normalized, secondNode.normalized);
+      Vector3 panelNormalNS = Vector3.Cross(secondNode.normalized, thirdV.normalized);
+      Vector3 thridNode = Vector3.ProjectOnPlane(thirdV.normalized, panelNormalNF);
+      if(Vector3.Angle(panelNormalNS,panelNormalNF) > 179.0f)
+      {
+        Vector3 refNode = Vector3.Reflect(thridNode, secondV);
+        thridNode = new Vector3(-refNode.x, -refNode.y, -refNode.z);
+      }
+      if(outPutType == 3)
+      {
+        return thridNode;
+      }
+      else
+      {
+        return secondNode;
+      }
+    }
+
     private Vector3 ToVector(NormalizedLandmark landmark) {
-      return new Vector3(landmark.X, landmark.Y, landmark.Z);
+      return new Vector3(landmark.X, landmark.Y, landmark.Z * 1.5f);
     }
 
     private Quaternion ComputeWristRotation() {
