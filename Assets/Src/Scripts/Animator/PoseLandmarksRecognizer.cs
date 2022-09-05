@@ -60,9 +60,13 @@ namespace SeedUnityVRKit {
         Vector3 forward = GetNormal(leftShoulder, leftHip, rightHip);
 
         // Note: left and right are mirrored here.
-
-        landmarks.Add(
+        //Debug.Log("BodyRotation:"+Vector3.Angle(forward, Vector3.forward));
+        if(Vector3.Angle(forward, Vector3.forward) < 45.0f)
+        {
+          landmarks.Add(
             new PoseLandmark { Id = Landmarks.Hip, Rotation = Quaternion.LookRotation(forward) });
+        }
+
         landmarks.Add(new PoseLandmark {
           Id = Landmarks.LeftShoulder,
           Rotation = Quaternion.LookRotation(
