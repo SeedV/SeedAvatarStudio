@@ -129,6 +129,18 @@ namespace SeedUnityVRKit {
         Gizmos.color = Color.yellow;
         Vector3 direction = _target.TransformDirection(Vector3.forward) * 1;
         Gizmos.DrawRay(_target.position, direction);
+
+        Gizmos.color = Color.green;
+        var wristTransform = transform;
+        var indexFinger = _handLandmarks[5].transform.position;
+        var middleFinger = _handLandmarks[9].transform.position;
+
+        var vectorToMiddle = middleFinger - wristTransform.position ;
+        var vectorToIndex = handType == HandType.LeftHand ?  wristTransform.position - indexFinger : indexFinger - wristTransform.position  ;
+        Vector3.OrthoNormalize(ref vectorToMiddle, ref vectorToIndex);
+        Vector3 normalVector = Vector3.Cross(vectorToIndex, vectorToMiddle);
+        Gizmos.DrawRay(_target.position, normalVector);
+
       }
       Gizmos.color = Color.red;
       foreach (var handLandmark in _handLandmarks) {
@@ -140,31 +152,38 @@ namespace SeedUnityVRKit {
     private void ComputeFingerRotation(){
       //Vector3 zeroNormal = handType == HandType.LeftHand ?  _handLandmarks[17].transform.position - _handLandmarks[5].transform.position : _handLandmarks[5].transform.position - _handLandmarks[17].transform.position;
 
-      _fingerTargets[0].rotation = Quaternion.LookRotation(_handLandmarks[2].transform.position - _handLandmarks[1].transform.position) * InitFingerRotation;
-      _fingerTargets[1].rotation = Quaternion.LookRotation(_handLandmarks[3].transform.position - _handLandmarks[2].transform.position) * InitFingerRotation;
-      _fingerTargets[2].rotation = Quaternion.LookRotation(ComputeIKFingerPosition(_handLandmarks[1].transform.position, _handLandmarks[2].transform.position, _handLandmarks[3].transform.position, _handLandmarks[4].transform.position)) * InitFingerRotation;
+      // _fingerTargets[0].rotation = Quaternion.LookRotation(_handLandmarks[2].transform.position - _handLandmarks[1].transform.position) * InitFingerRotation;
+      // _fingerTargets[1].rotation = Quaternion.LookRotation(_handLandmarks[3].transform.position - _handLandmarks[2].transform.position) * InitFingerRotation;
+      //_fingerTargets[2].rotation = Quaternion.LookRotation(ComputeIKFingerPosition(_handLandmarks[1].transform.position, _handLandmarks[2].transform.position, _handLandmarks[3].transform.position, _handLandmarks[4].transform.position)) * InitFingerRotation;
+      _fingerTargets[0].rotation = Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[2].transform.position) - ReflectIKFingerPosition(_handLandmarks[1].transform.position)) * InitFingerRotation;
+      _fingerTargets[1].rotation = Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[3].transform.position) - ReflectIKFingerPosition(_handLandmarks[2].transform.position)) * InitFingerRotation;
+      _fingerTargets[2].rotation = Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[4].transform.position) - ReflectIKFingerPosition(_handLandmarks[3].transform.position)) * InitFingerRotation;
 
       //_fingerTargets[3].rotation = Quaternion.LookRotation(_handLandmarks[6].transform.position - _handLandmarks[5].transform.position) * InitFingerRotation;
       //_fingerTargets[4].rotation = Quaternion.LookRotation(_handLandmarks[7].transform.position - _handLandmarks[6].transform.position) * InitFingerRotation;
       //_fingerTargets[5].rotation = Quaternion.LookRotation(ComputeIKFingerPosition(_handLandmarks[5].transform.position, _handLandmarks[6].transform.position, _handLandmarks[7].transform.position, _handLandmarks[8].transform.position)) * InitFingerRotation;
-      _fingerTargets[3].rotation = Quaternion.LookRotation(ComputeIKFingerRotation(
-        _handLandmarks[5].transform.position,
-        _handLandmarks[9].transform.position,
-        _handLandmarks[6].transform.position - _handLandmarks[5].transform.position,
-        _handLandmarks[7].transform.position - _handLandmarks[6].transform.position,
-        _handLandmarks[8].transform.position - _handLandmarks[7].transform.position, 1)) * InitFingerRotation;
-      _fingerTargets[4].rotation = Quaternion.LookRotation(ComputeIKFingerRotation(
-        _handLandmarks[5].transform.position,
-        _handLandmarks[9].transform.position,
-        _handLandmarks[6].transform.position - _handLandmarks[5].transform.position,
-        _handLandmarks[7].transform.position - _handLandmarks[6].transform.position,
-        _handLandmarks[8].transform.position - _handLandmarks[7].transform.position, 2)) * InitFingerRotation;
-      _fingerTargets[5].rotation = Quaternion.LookRotation(ComputeIKFingerRotation(
-        _handLandmarks[5].transform.position,
-        _handLandmarks[9].transform.position,
-        _handLandmarks[6].transform.position - _handLandmarks[5].transform.position,
-        _handLandmarks[7].transform.position - _handLandmarks[6].transform.position,
-        _handLandmarks[8].transform.position - _handLandmarks[7].transform.position, 3)) * InitFingerRotation;
+      // _fingerTargets[3].rotation = Quaternion.LookRotation(ComputeIKFingerRotation(
+      //   _handLandmarks[5].transform.position,
+      //   _handLandmarks[9].transform.position,
+      //   _handLandmarks[6].transform.position - _handLandmarks[5].transform.position,
+      //   _handLandmarks[7].transform.position - _handLandmarks[6].transform.position,
+      //   _handLandmarks[8].transform.position - _handLandmarks[7].transform.position, 1)) * InitFingerRotation;
+      // _fingerTargets[4].rotation = Quaternion.LookRotation(ComputeIKFingerRotation(
+      //   _handLandmarks[5].transform.position,
+      //   _handLandmarks[9].transform.position,
+      //   _handLandmarks[6].transform.position - _handLandmarks[5].transform.position,
+      //   _handLandmarks[7].transform.position - _handLandmarks[6].transform.position,
+      //   _handLandmarks[8].transform.position - _handLandmarks[7].transform.position, 2)) * InitFingerRotation;
+      // _fingerTargets[5].rotation = Quaternion.LookRotation(ComputeIKFingerRotation(
+      //   _handLandmarks[5].transform.position,
+      //   _handLandmarks[9].transform.position,
+      //   _handLandmarks[6].transform.position - _handLandmarks[5].transform.position,
+      //   _handLandmarks[7].transform.position - _handLandmarks[6].transform.position,
+      //   _handLandmarks[8].transform.position - _handLandmarks[7].transform.position, 3)) * InitFingerRotation;
+
+      _fingerTargets[3].rotation = Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[6].transform.position) - ReflectIKFingerPosition(_handLandmarks[5].transform.position)) * InitFingerRotation;
+      _fingerTargets[4].rotation = Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[7].transform.position) - ReflectIKFingerPosition(_handLandmarks[6].transform.position)) * InitFingerRotation;
+      _fingerTargets[5].rotation = Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[8].transform.position) - ReflectIKFingerPosition(_handLandmarks[7].transform.position)) * InitFingerRotation;
 
       // ComputeIKFingerRotation(
       //    _handLandmarks[17].transform.position - _handLandmarks[5].transform.position,
@@ -175,68 +194,78 @@ namespace SeedUnityVRKit {
       //_fingerTargets[6].rotation = Quaternion.LookRotation(_handLandmarks[10].transform.position - _handLandmarks[9].transform.position) * InitFingerRotation;
       //_fingerTargets[7].rotation = Quaternion.LookRotation(_handLandmarks[11].transform.position - _handLandmarks[10].transform.position) * InitFingerRotation;
       //_fingerTargets[8].rotation = Quaternion.LookRotation(ComputeIKFingerPosition(_handLandmarks[9].transform.position, _handLandmarks[10].transform.position, _handLandmarks[11].transform.position, _handLandmarks[12].transform.position)) * InitFingerRotation;
-      _fingerTargets[6].rotation = Quaternion.LookRotation(ComputeIKFingerRotation(
-        _handLandmarks[9].transform.position,
-        _handLandmarks[13].transform.position,
-        _handLandmarks[10].transform.position - _handLandmarks[9].transform.position,
-        _handLandmarks[11].transform.position - _handLandmarks[10].transform.position,
-        _handLandmarks[12].transform.position - _handLandmarks[11].transform.position, 1)) * InitFingerRotation;
-      _fingerTargets[7].rotation = Quaternion.LookRotation(ComputeIKFingerRotation(
-        _handLandmarks[9].transform.position,
-        _handLandmarks[13].transform.position,
-        _handLandmarks[10].transform.position - _handLandmarks[9].transform.position,
-        _handLandmarks[11].transform.position - _handLandmarks[10].transform.position,
-        _handLandmarks[12].transform.position - _handLandmarks[11].transform.position, 2)) * InitFingerRotation;
-      _fingerTargets[8].rotation = Quaternion.LookRotation(ComputeIKFingerRotation(
-        _handLandmarks[9].transform.position,
-        _handLandmarks[13].transform.position,
-        _handLandmarks[10].transform.position - _handLandmarks[9].transform.position,
-        _handLandmarks[11].transform.position - _handLandmarks[10].transform.position,
-        _handLandmarks[12].transform.position - _handLandmarks[11].transform.position, 3)) * InitFingerRotation;
+      _fingerTargets[6].rotation = Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[10].transform.position) - ReflectIKFingerPosition(_handLandmarks[9].transform.position)) * InitFingerRotation;
+      _fingerTargets[7].rotation = Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[11].transform.position) - ReflectIKFingerPosition(_handLandmarks[10].transform.position)) * InitFingerRotation;
+      _fingerTargets[8].rotation = Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[12].transform.position) - ReflectIKFingerPosition(_handLandmarks[11].transform.position)) * InitFingerRotation;
+
+      // _fingerTargets[6].rotation = Quaternion.LookRotation(ComputeIKFingerRotation(
+      //   _handLandmarks[9].transform.position,
+      //   _handLandmarks[13].transform.position,
+      //   _handLandmarks[10].transform.position - _handLandmarks[9].transform.position,
+      //   _handLandmarks[11].transform.position - _handLandmarks[10].transform.position,
+      //   _handLandmarks[12].transform.position - _handLandmarks[11].transform.position, 1)) * InitFingerRotation;
+      // _fingerTargets[7].rotation = Quaternion.LookRotation(ComputeIKFingerRotation(
+      //   _handLandmarks[9].transform.position,
+      //   _handLandmarks[13].transform.position,
+      //   _handLandmarks[10].transform.position - _handLandmarks[9].transform.position,
+      //   _handLandmarks[11].transform.position - _handLandmarks[10].transform.position,
+      //   _handLandmarks[12].transform.position - _handLandmarks[11].transform.position, 2)) * InitFingerRotation;
+      // _fingerTargets[8].rotation = Quaternion.LookRotation(ComputeIKFingerRotation(
+      //   _handLandmarks[9].transform.position,
+      //   _handLandmarks[13].transform.position,
+      //   _handLandmarks[10].transform.position - _handLandmarks[9].transform.position,
+      //   _handLandmarks[11].transform.position - _handLandmarks[10].transform.position,
+      //   _handLandmarks[12].transform.position - _handLandmarks[11].transform.position, 3)) * InitFingerRotation;
 
       //_fingerTargets[9].rotation = Quaternion.LookRotation(_handLandmarks[14].transform.position - _handLandmarks[13].transform.position) * InitFingerRotation;
       //_fingerTargets[10].rotation = Quaternion.LookRotation(_handLandmarks[15].transform.position - _handLandmarks[14].transform.position) * InitFingerRotation;
       //_fingerTargets[11].rotation = Quaternion.LookRotation(ComputeIKFingerPosition(_handLandmarks[13].transform.position, _handLandmarks[14].transform.position, _handLandmarks[15].transform.position, _handLandmarks[16].transform.position)) * InitFingerRotation;
-      _fingerTargets[9].rotation = Quaternion.LookRotation(ComputeIKFingerRotation(
-        _handLandmarks[13].transform.position,
-        _handLandmarks[17].transform.position,
-        _handLandmarks[14].transform.position - _handLandmarks[13].transform.position,
-        _handLandmarks[15].transform.position - _handLandmarks[14].transform.position,
-        _handLandmarks[16].transform.position - _handLandmarks[15].transform.position, 1)) * InitFingerRotation;
-      _fingerTargets[10].rotation = Quaternion.LookRotation(ComputeIKFingerRotation(
-        _handLandmarks[13].transform.position,
-        _handLandmarks[17].transform.position,
-        _handLandmarks[14].transform.position - _handLandmarks[13].transform.position,
-        _handLandmarks[15].transform.position - _handLandmarks[14].transform.position,
-        _handLandmarks[16].transform.position - _handLandmarks[15].transform.position, 2)) * InitFingerRotation;
-      _fingerTargets[11].rotation = Quaternion.LookRotation(ComputeIKFingerRotation(
-        _handLandmarks[13].transform.position,
-        _handLandmarks[17].transform.position,
-        _handLandmarks[14].transform.position - _handLandmarks[13].transform.position,
-        _handLandmarks[15].transform.position - _handLandmarks[14].transform.position,
-        _handLandmarks[16].transform.position - _handLandmarks[15].transform.position, 3)) * InitFingerRotation;
+      _fingerTargets[9].rotation = Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[14].transform.position) - ReflectIKFingerPosition(_handLandmarks[13].transform.position)) * InitFingerRotation;
+      _fingerTargets[10].rotation = Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[15].transform.position) - ReflectIKFingerPosition(_handLandmarks[14].transform.position)) * InitFingerRotation;
+      _fingerTargets[11].rotation = Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[16].transform.position) - ReflectIKFingerPosition(_handLandmarks[15].transform.position)) * InitFingerRotation;
+      // _fingerTargets[9].rotation = Quaternion.LookRotation(ComputeIKFingerRotation(
+      //   _handLandmarks[13].transform.position,
+      //   _handLandmarks[17].transform.position,
+      //   _handLandmarks[14].transform.position - _handLandmarks[13].transform.position,
+      //   _handLandmarks[15].transform.position - _handLandmarks[14].transform.position,
+      //   _handLandmarks[16].transform.position - _handLandmarks[15].transform.position, 1)) * InitFingerRotation;
+      // _fingerTargets[10].rotation = Quaternion.LookRotation(ComputeIKFingerRotation(
+      //   _handLandmarks[13].transform.position,
+      //   _handLandmarks[17].transform.position,
+      //   _handLandmarks[14].transform.position - _handLandmarks[13].transform.position,
+      //   _handLandmarks[15].transform.position - _handLandmarks[14].transform.position,
+      //   _handLandmarks[16].transform.position - _handLandmarks[15].transform.position, 2)) * InitFingerRotation;
+      // _fingerTargets[11].rotation = Quaternion.LookRotation(ComputeIKFingerRotation(
+      //   _handLandmarks[13].transform.position,
+      //   _handLandmarks[17].transform.position,
+      //   _handLandmarks[14].transform.position - _handLandmarks[13].transform.position,
+      //   _handLandmarks[15].transform.position - _handLandmarks[14].transform.position,
+      //   _handLandmarks[16].transform.position - _handLandmarks[15].transform.position, 3)) * InitFingerRotation;
 
       //_fingerTargets[12].rotation = Quaternion.LookRotation(_handLandmarks[18].transform.position - _handLandmarks[17].transform.position) * InitFingerRotation;
       //_fingerTargets[13].rotation = Quaternion.LookRotation(_handLandmarks[19].transform.position - _handLandmarks[18].transform.position) * InitFingerRotation;
       //_fingerTargets[14].rotation = Quaternion.LookRotation(ComputeIKFingerPosition(_handLandmarks[17].transform.position, _handLandmarks[18].transform.position, _handLandmarks[19].transform.position, _handLandmarks[20].transform.position)) * InitFingerRotation;
-      _fingerTargets[12].rotation = Quaternion.LookRotation(ComputeIKFingerRotation(
-        _handLandmarks[13].transform.position,
-        _handLandmarks[17].transform.position,
-        _handLandmarks[18].transform.position - _handLandmarks[17].transform.position,
-        _handLandmarks[19].transform.position - _handLandmarks[18].transform.position,
-        _handLandmarks[20].transform.position - _handLandmarks[19].transform.position, 1)) * InitFingerRotation;
-      _fingerTargets[13].rotation = Quaternion.LookRotation(ComputeIKFingerRotation(
-        _handLandmarks[13].transform.position,
-        _handLandmarks[17].transform.position,
-        _handLandmarks[18].transform.position - _handLandmarks[17].transform.position,
-        _handLandmarks[19].transform.position - _handLandmarks[18].transform.position,
-        _handLandmarks[20].transform.position - _handLandmarks[19].transform.position, 2)) * InitFingerRotation;
-      _fingerTargets[14].rotation = Quaternion.LookRotation(ComputeIKFingerRotation(
-        _handLandmarks[13].transform.position,
-        _handLandmarks[17].transform.position,
-        _handLandmarks[18].transform.position - _handLandmarks[17].transform.position,
-        _handLandmarks[19].transform.position - _handLandmarks[18].transform.position,
-        _handLandmarks[20].transform.position - _handLandmarks[19].transform.position, 3)) * InitFingerRotation;
+      _fingerTargets[12].rotation = Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[18].transform.position) - ReflectIKFingerPosition(_handLandmarks[17].transform.position)) * InitFingerRotation;
+      _fingerTargets[13].rotation = Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[19].transform.position) - ReflectIKFingerPosition(_handLandmarks[18].transform.position)) * InitFingerRotation;
+      _fingerTargets[14].rotation = Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[20].transform.position) - ReflectIKFingerPosition(_handLandmarks[19].transform.position)) * InitFingerRotation;
+      // _fingerTargets[12].rotation = Quaternion.LookRotation(ComputeIKFingerRotation(
+      //   _handLandmarks[13].transform.position,
+      //   _handLandmarks[17].transform.position,
+      //   _handLandmarks[18].transform.position - _handLandmarks[17].transform.position,
+      //   _handLandmarks[19].transform.position - _handLandmarks[18].transform.position,
+      //   _handLandmarks[20].transform.position - _handLandmarks[19].transform.position, 1)) * InitFingerRotation;
+      // _fingerTargets[13].rotation = Quaternion.LookRotation(ComputeIKFingerRotation(
+      //   _handLandmarks[13].transform.position,
+      //   _handLandmarks[17].transform.position,
+      //   _handLandmarks[18].transform.position - _handLandmarks[17].transform.position,
+      //   _handLandmarks[19].transform.position - _handLandmarks[18].transform.position,
+      //   _handLandmarks[20].transform.position - _handLandmarks[19].transform.position, 2)) * InitFingerRotation;
+      // _fingerTargets[14].rotation = Quaternion.LookRotation(ComputeIKFingerRotation(
+      //   _handLandmarks[13].transform.position,
+      //   _handLandmarks[17].transform.position,
+      //   _handLandmarks[18].transform.position - _handLandmarks[17].transform.position,
+      //   _handLandmarks[19].transform.position - _handLandmarks[18].transform.position,
+      //   _handLandmarks[20].transform.position - _handLandmarks[19].transform.position, 3)) * InitFingerRotation;
     }
 
     private Vector3 ComputeIKFingerPosition(Vector3 firstNode, Vector3 secondNode, Vector3 ThirdNode, Vector3 endNode){
@@ -248,26 +277,50 @@ namespace SeedUnityVRKit {
       return preNode;
     }
 
+    private Vector3 ReflectIKFingerPosition(Vector3 Node){
+      var wristTransform = transform;
+      var indexFinger = _handLandmarks[5].transform.position;
+      var middleFinger = _handLandmarks[9].transform.position;
+
+      var vectorToMiddle = middleFinger - wristTransform.position ;
+      var vectorToIndex = handType == HandType.LeftHand ?  wristTransform.position - indexFinger : indexFinger - wristTransform.position  ;
+      Vector3.OrthoNormalize(ref vectorToMiddle, ref vectorToIndex);
+      Vector3 normalVector = Vector3.Cross(vectorToIndex, vectorToMiddle);
+      var targetFinger = Node - wristTransform.position;
+
+      if(Vector3.Angle(normalVector.normalized ,targetFinger.normalized)  > 99.0f){
+        Vector3 refNode = Vector3.Reflect(targetFinger.normalized,normalVector.normalized);
+        targetFinger = new Vector3(-refNode.x, -refNode.y, -refNode.z);
+      }
+
+      return targetFinger;
+
+
+    }
+
+
+
     private Vector3 ComputeIKFingerRotation(Vector3 zeroF , Vector3 zeroT, Vector3 firstV, Vector3 secondV, Vector3 thirdV, int outPutType) {
-      Vector3 zeroV = handType == HandType.LeftHand ? zeroT - zeroF : zeroF - zeroT;
-      Vector3 firstNode = Vector3.ProjectOnPlane(firstV.normalized, zeroV.normalized);
-      Vector3 secondNode = Vector3.ProjectOnPlane(secondV.normalized, zeroV.normalized);
-      Vector3 thirdNode = Vector3.ProjectOnPlane(thirdV.normalized, zeroV.normalized);
+      Vector3 normalV = handType == HandType.LeftHand ? zeroT.normalized - zeroF.normalized : zeroF.normalized - zeroT.normalized;
+      Vector3 firstNode = Vector3.ProjectOnPlane(firstV.normalized, normalV.normalized);
+      Vector3 secondNode = Vector3.ProjectOnPlane(secondV.normalized, normalV.normalized);
+      Vector3 thirdNode = Vector3.ProjectOnPlane(thirdV.normalized, normalV.normalized);
       Vector3 panelNormalF = Vector3.Cross(firstNode.normalized, secondNode.normalized);
       Vector3 panelNormalS = Vector3.Cross(secondNode.normalized, thirdNode.normalized);
-      Debug.Log("sAngle:"+Vector3.Angle(zeroV.normalized ,panelNormalF));
-      Debug.Log("tAngle:"+Vector3.Angle(zeroV.normalized ,panelNormalS));
-      if(Vector3.Angle(zeroV.normalized ,panelNormalF)  > 179.0f){
+      //Debug.Log("zAngle:"+Vector3.Angle(normalV.normalized ,panelNormalZ));
+      //Debug.Log("sAngle:"+Vector3.Angle(normalV.normalized ,panelNormalF));
+      //Debug.Log("tAngle:"+Vector3.Angle(normalV.normalized ,panelNormalS));
+      if(Vector3.Angle(normalV.normalized ,panelNormalF)  > 179.0f){
         Vector3 refNodeS = Vector3.Reflect(secondNode.normalized,firstNode.normalized);
         secondNode = new Vector3(-refNodeS.x, -refNodeS.y, -refNodeS.z);
-        if(Vector3.Angle(zeroV.normalized ,panelNormalS)  > 179.0f){
+        if(Vector3.Angle(normalV.normalized ,panelNormalS)  > 179.0f){
           Vector3 refNodeT = Vector3.Reflect(thirdNode.normalized,firstNode.normalized);
           thirdNode = new Vector3(-refNodeT.x, -refNodeT.y, -refNodeT.z);
         }
       }
       else
       {
-        if(Vector3.Angle(zeroV.normalized ,panelNormalS)  > 179.0f){
+        if(Vector3.Angle(normalV.normalized ,panelNormalS)  > 179.0f){
           Vector3 refNode = Vector3.Reflect(thirdNode.normalized,secondNode.normalized);
           thirdNode = new Vector3(-refNode.x, -refNode.y, -refNode.z);
         }
