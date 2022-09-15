@@ -118,7 +118,7 @@ namespace SeedUnityVRKit {
 
 
     public virtual void SetMouth(FaceLandmarks faceLandmarks) {
-      _mouthMeshRenderer.SetBlendShapeWeight(2, faceLandmarks.MouthAspectRatio * 100);
+      _mouthMeshRenderer.SetBlendShapeWeight(1, faceLandmarks.MouthAspectRatio * 100);
     }
 
     public virtual void SetEye(bool close) {

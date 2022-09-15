@@ -19,23 +19,18 @@ using UnityEngine;
 namespace SeedUnityVRKit {
   // <summary>An animator to visualize upper body and face.</summary>
   public class AvatarAnimator : UpperBodyAnimator {
-    public GameObject MouthClose;
-    public GameObject MouthSmall;
-    public GameObject MouthMid;
-    public GameObject MouthLarge;
     public GameObject EyesClose;
     public GameObject EyesOpen;
     public GameObject Eyeslids;
+    public GameObject Head;
 
     private void SetObjectVisible(GameObject obj, bool flag) {
       obj.SetActive(flag);
     }
 
     public override void SetMouth(FaceLandmarks faceLandmarks) {
-      // SetObjectVisible(MouthClose, MouthShape.Close == faceLandmarks.MouthShape);
-      // SetObjectVisible(MouthSmall, MouthShape.Small == faceLandmarks.MouthShape);
-      // SetObjectVisible(MouthMid, MouthShape.Mid == faceLandmarks.MouthShape);
-      // SetObjectVisible(MouthLarge, MouthShape.Large == faceLandmarks.MouthShape);
+      SkinnedMeshRenderer mouthRender = Head.GetComponent<SkinnedMeshRenderer>();
+      mouthRender.SetBlendShapeWeight(2, faceLandmarks.MouthAspectRatio * 100);
     }
 
     public override void SetEye(bool close) {
