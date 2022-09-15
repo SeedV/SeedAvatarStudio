@@ -41,6 +41,5 @@ namespace SeedUnityVRKit {
     public override void GetSpecialPart() {
       // do no things
     }
-
   }
 }
