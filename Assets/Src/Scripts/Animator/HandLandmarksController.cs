@@ -95,21 +95,22 @@ namespace SeedUnityVRKit {
 
     void Update() {
       if (HandLandmarkList != null) {
-        transform.position = _target.transform.position;
-        _target.rotation = ComputeWristRotation() * InitWristRotation;
-        NormalizedLandmark landmark0 = HandLandmarkList.Landmark[0];
-        NormalizedLandmark landmark1 = HandLandmarkList.Landmark[1];
-        var s = _modelThumbLength / (ToVector(landmark1) - ToVector(landmark0)).magnitude;
-        var scale = new Vector3(s * _screenRatio, s, s * _screenRatio);
-        for (int i = 1; i < HandLandmarkList.Landmark.Count; i++) {
-          NormalizedLandmark landmark = HandLandmarkList.Landmark[i];
-          Vector3 tip = Vector3.Scale(ToVector(landmark) - ToVector(landmark0), scale);
-          _handLandmarks[i].transform.localPosition = _kalmanFilters[i].Update(tip);
+          NormalizedLandmark landmark0 = HandLandmarkList.Landmark[0];
+          NormalizedLandmark landmark1 = HandLandmarkList.Landmark[1];
+          var s = _modelThumbLength / (ToVector(landmark1) - ToVector(landmark0)).magnitude;
+          var scale = new Vector3(s * _screenRatio, s, s * _screenRatio);
+          for (int i = 1; i < HandLandmarkList.Landmark.Count; i++) {
+            NormalizedLandmark landmark = HandLandmarkList.Landmark[i];
+            Vector3 tip = Vector3.Scale(ToVector(landmark) - ToVector(landmark0), scale);
+            _handLandmarks[i].transform.localPosition = _kalmanFilters[i].Update(tip);
+          }
+          float wristAngle = LimitWristRotation();
+          if(handType == HandType.LeftHand && wristAngle < 99.0f || handType == HandType.RightHand && wristAngle > 81.0f ){
+            transform.position = _target.transform.position;
+            _target.rotation = ComputeWristRotation() * InitWristRotation;
+            ComputeFingerRotation();
+          }
         }
-
-        ComputeFingerRotation();
-
-      }
     }
 
     void OnDrawGizmos() {
@@ -184,6 +185,18 @@ namespace SeedUnityVRKit {
 
     private Vector3 ToVector(NormalizedLandmark landmark) {
       return new Vector3(landmark.X, landmark.Y, landmark.Z);
+    }
+
+    private float LimitWristRotation() {
+      var wristTransform = transform;
+      var indexFinger = _handLandmarks[5].transform.position;
+      var middleFinger = _handLandmarks[9].transform.position;
+
+      var vectorToMiddle = middleFinger - wristTransform.position;
+      var vectorToIndex = indexFinger - wristTransform.position;
+      Vector3.OrthoNormalize(ref vectorToMiddle, ref vectorToIndex);
+      Vector3 normalVector = Vector3.Cross(vectorToIndex, vectorToMiddle);
+      return Vector3.Angle(normalVector.normalized ,Vector3.forward);
     }
 
     private Quaternion ComputeWristRotation() {
