@@ -104,9 +104,9 @@ namespace SeedUnityVRKit {
             Vector3 tip = Vector3.Scale(ToVector(landmark) - ToVector(landmark0), scale);
             _handLandmarks[i].transform.localPosition = _kalmanFilters[i].Update(tip);
           }
+          transform.position = _target.transform.position;
           float wristAngle = LimitWristRotation();
           if(handType == HandType.LeftHand && wristAngle < 99.0f || handType == HandType.RightHand && wristAngle > 81.0f ){
-            transform.position = _target.transform.position;
             _target.rotation = ComputeWristRotation() * InitWristRotation;
             ComputeFingerRotation();
           }
