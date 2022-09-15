@@ -144,7 +144,7 @@ namespace SeedUnityVRKit {
     private void ComputeFingerRotation() {
       _fingerTargets[0].rotation =
           Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[2].transform.position) -
-                                                          ReflectIKFingerPosition(_handLandmarks[1].transform.position)) *
+                                  ReflectIKFingerPosition(_handLandmarks[1].transform.position)) *
           InitFingerRotation;
       _fingerTargets[1].rotation =
           Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[3].transform.position) -
