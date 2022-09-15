@@ -116,7 +116,6 @@ namespace SeedUnityVRKit {
       _elMeshRenderer = GameObject.Find(ElDefConst).GetComponent<SkinnedMeshRenderer>();
     }
 
-
     public virtual void SetMouth(FaceLandmarks faceLandmarks) {
       _mouthMeshRenderer.SetBlendShapeWeight(1, faceLandmarks.MouthAspectRatio * 100);
     }
