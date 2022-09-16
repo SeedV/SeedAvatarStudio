@@ -147,67 +147,82 @@ namespace SeedUnityVRKit {
     private void ComputeFingerRotation() {
       _fingerTargets[0].rotation =
           Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[2].transform.position) -
-                                  ReflectIKFingerPosition(_handLandmarks[1].transform.position), _directVector) *
+                                      ReflectIKFingerPosition(_handLandmarks[1].transform.position),
+                                  _directVector) *
           InitFingerRotation;
       _fingerTargets[1].rotation =
           Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[3].transform.position) -
-                                  ReflectIKFingerPosition(_handLandmarks[2].transform.position), _directVector) *
+                                      ReflectIKFingerPosition(_handLandmarks[2].transform.position),
+                                  _directVector) *
           InitFingerRotation;
       _fingerTargets[2].rotation =
           Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[4].transform.position) -
-                                  ReflectIKFingerPosition(_handLandmarks[3].transform.position), _directVector) *
+                                      ReflectIKFingerPosition(_handLandmarks[3].transform.position),
+                                  _directVector) *
           InitFingerRotation;
 
       _fingerTargets[3].rotation =
           Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[6].transform.position) -
-                                  ReflectIKFingerPosition(_handLandmarks[5].transform.position), _directVector) *
+                                      ReflectIKFingerPosition(_handLandmarks[5].transform.position),
+                                  _directVector) *
           InitFingerRotation;
       _fingerTargets[4].rotation =
           Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[7].transform.position) -
-                                  ReflectIKFingerPosition(_handLandmarks[6].transform.position), _directVector) *
+                                      ReflectIKFingerPosition(_handLandmarks[6].transform.position),
+                                  _directVector) *
           InitFingerRotation;
       _fingerTargets[5].rotation =
           Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[8].transform.position) -
-                                  ReflectIKFingerPosition(_handLandmarks[7].transform.position), _directVector) *
+                                      ReflectIKFingerPosition(_handLandmarks[7].transform.position),
+                                  _directVector) *
           InitFingerRotation;
 
       _fingerTargets[6].rotation =
           Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[10].transform.position) -
-                                  ReflectIKFingerPosition(_handLandmarks[9].transform.position), _directVector) *
+                                      ReflectIKFingerPosition(_handLandmarks[9].transform.position),
+                                  _directVector) *
           InitFingerRotation;
       _fingerTargets[7].rotation =
           Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[11].transform.position) -
-                                  ReflectIKFingerPosition(_handLandmarks[10].transform.position), _directVector) *
+                                      ReflectIKFingerPosition(_handLandmarks[10].transform.position),
+                                  _directVector) *
           InitFingerRotation;
       _fingerTargets[8].rotation =
           Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[12].transform.position) -
-                                  ReflectIKFingerPosition(_handLandmarks[11].transform.position), _directVector) *
+                                      ReflectIKFingerPosition(_handLandmarks[11].transform.position),
+                                  _directVector) *
           InitFingerRotation;
 
       _fingerTargets[9].rotation =
           Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[14].transform.position) -
-                                  ReflectIKFingerPosition(_handLandmarks[13].transform.position), _directVector) *
+                                      ReflectIKFingerPosition(_handLandmarks[13].transform.position),
+                                  _directVector) *
           InitFingerRotation;
       _fingerTargets[10].rotation =
           Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[15].transform.position) -
-                                  ReflectIKFingerPosition(_handLandmarks[14].transform.position), _directVector) *
+                                      ReflectIKFingerPosition(_handLandmarks[14].transform.position),
+                                  _directVector) *
           InitFingerRotation;
       _fingerTargets[11].rotation =
           Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[16].transform.position) -
-                                  ReflectIKFingerPosition(_handLandmarks[15].transform.position), _directVector) *
+                                      ReflectIKFingerPosition(_handLandmarks[15].transform.position),
+                                  _directVector) *
           InitFingerRotation;
 
       _fingerTargets[12].rotation =
           Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[18].transform.position) -
-                                  ReflectIKFingerPosition(_handLandmarks[17].transform.position), _directVector) *
+                                      ReflectIKFingerPosition(_handLandmarks[17].transform.position),
+                                  _directVector) *
           InitFingerRotation;
       _fingerTargets[13].rotation =
           Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[19].transform.position) -
-                                  ReflectIKFingerPosition(_handLandmarks[18].transform.position), _directVector) *
+                                      ReflectIKFingerPosition(_handLandmarks[18].transform.position),
+                                  _directVector) *
           InitFingerRotation;
       _fingerTargets[14].rotation =
           Quaternion.LookRotation(ReflectIKFingerPosition(_handLandmarks[20].transform.position) -
-                                  ReflectIKFingerPosition(_handLandmarks[19].transform.position), _directVector) *
+                                      ReflectIKFingerPosition(_handLandmarks[19].transform.position),
+                                  _directVector) *
           InitFingerRotation;
     }
 
