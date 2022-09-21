@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#define UNITY_MAC_X64
+
 
 using System;
 using System.Collections;
@@ -55,6 +55,8 @@ namespace SeedUnityVRKit {
     /// <summary>The translation vector for SolvePnP.</summary>
     private float[] _translationVector = new float[3];
     /// <summary>Exported native C function for SolvePnP.</summary>
+    private KalmanFilter _neckFilter = new KalmanFilter(0.125f, 1f);
+
 #if UNITY_MAC_X64
     [DllImport("opencvplugin_x64")]
 #else
@@ -101,7 +103,7 @@ namespace SeedUnityVRKit {
       solvePnP(_screenWidth, _screenHeight, _face3DPoints, pnpArray, null, null, _rotationVector,
                _translationVector, useExtrinsicGuess);
 
-      Vector3 axis = new Vector3(_rotationVector[0], _rotationVector[1], _rotationVector[2]);
+      Vector3 axis = _neckFilter.Update(new Vector3(_rotationVector[0], _rotationVector[1], _rotationVector[2]));
       float theta = (float)(axis.magnitude * 180 / Math.PI);
       faceLandmarks.FaceRotation = Quaternion.AngleAxis(theta, axis);
 
