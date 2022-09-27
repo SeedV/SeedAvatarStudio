@@ -58,4 +58,22 @@ namespace SeedUnityVRKit {
 
     public const int Total = 35;
   };
+  public class HandLandmarks {
+    public const int ThumbProximal = 0;
+    public const int ThumbIntermediate = 1;
+    public const int ThumbDistal = 2;
+    public const int IndexProximal = 3;
+    public const int IndexIntermediate = 4;
+    public const int IndexDistal = 5;
+    public const int MiddleProximal = 6;
+    public const int MiddleIntermediate = 7;
+    public const int MiddleDistal = 8;
+    public const int RingProximal = 9;
+    public const int RingIntermediate = 10;
+    public const int RingDistal = 11;
+    public const int LittleProximal = 12;
+    public const int LittleIntermediate = 13;
+    public const int LittleDistal = 14;
+    public const int Total = 15;
+  };
 }

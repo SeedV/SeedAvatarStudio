@@ -42,7 +42,7 @@ namespace SeedUnityVRKit {
 
     private GameObject[] _handLandmarks = new GameObject[_landmarksNum];
     private float _screenRatio = 1.0f;
-    private Transform[] _fingerTargets = new Transform[15];
+    private Transform[] _fingerTargets = new Transform[HandLandmarks.Total];
     private KalmanFilter[] _kalmanFilters = new KalmanFilter[_landmarksNum];
     private Quaternion _wristRotation = Quaternion.Euler(0, 0, 0);
     private Vector3 _forwardVector;
@@ -63,37 +63,37 @@ namespace SeedUnityVRKit {
       _screenRatio = 1.0f * ScreenWidth / ScreenHeight;
       // The output of HandPose detection is mirrored here.
       if (handType == HandType.LeftHand) {
-        _fingerTargets[0] = anim.GetBoneTransform(HumanBodyBones.RightThumbProximal);
-        _fingerTargets[1] = anim.GetBoneTransform(HumanBodyBones.RightThumbIntermediate);
-        _fingerTargets[2] = anim.GetBoneTransform(HumanBodyBones.RightThumbDistal);
-        _fingerTargets[3] = anim.GetBoneTransform(HumanBodyBones.RightIndexProximal);
-        _fingerTargets[4] = anim.GetBoneTransform(HumanBodyBones.RightIndexIntermediate);
-        _fingerTargets[5] = anim.GetBoneTransform(HumanBodyBones.RightIndexDistal);
-        _fingerTargets[6] = anim.GetBoneTransform(HumanBodyBones.RightMiddleProximal);
-        _fingerTargets[7] = anim.GetBoneTransform(HumanBodyBones.RightMiddleIntermediate);
-        _fingerTargets[8] = anim.GetBoneTransform(HumanBodyBones.RightMiddleDistal);
-        _fingerTargets[9] = anim.GetBoneTransform(HumanBodyBones.RightRingProximal);
-        _fingerTargets[10] = anim.GetBoneTransform(HumanBodyBones.RightRingIntermediate);
-        _fingerTargets[11] = anim.GetBoneTransform(HumanBodyBones.RightRingDistal);
-        _fingerTargets[12] = anim.GetBoneTransform(HumanBodyBones.RightLittleProximal);
-        _fingerTargets[13] = anim.GetBoneTransform(HumanBodyBones.RightLittleIntermediate);
-        _fingerTargets[14] = anim.GetBoneTransform(HumanBodyBones.RightLittleDistal);
+        _fingerTargets[HandLandmarks.ThumbProximal] = anim.GetBoneTransform(HumanBodyBones.RightThumbProximal);
+        _fingerTargets[HandLandmarks.ThumbIntermediate] = anim.GetBoneTransform(HumanBodyBones.RightThumbIntermediate);
+        _fingerTargets[HandLandmarks.ThumbDistal] = anim.GetBoneTransform(HumanBodyBones.RightThumbDistal);
+        _fingerTargets[HandLandmarks.IndexProximal] = anim.GetBoneTransform(HumanBodyBones.RightIndexProximal);
+        _fingerTargets[HandLandmarks.IndexIntermediate] = anim.GetBoneTransform(HumanBodyBones.RightIndexIntermediate);
+        _fingerTargets[HandLandmarks.IndexDistal] = anim.GetBoneTransform(HumanBodyBones.RightIndexDistal);
+        _fingerTargets[HandLandmarks.MiddleProximal] = anim.GetBoneTransform(HumanBodyBones.RightMiddleProximal);
+        _fingerTargets[HandLandmarks.MiddleIntermediate] = anim.GetBoneTransform(HumanBodyBones.RightMiddleIntermediate);
+        _fingerTargets[HandLandmarks.MiddleDistal] = anim.GetBoneTransform(HumanBodyBones.RightMiddleDistal);
+        _fingerTargets[HandLandmarks.RingProximal] = anim.GetBoneTransform(HumanBodyBones.RightRingProximal);
+        _fingerTargets[HandLandmarks.RingIntermediate] = anim.GetBoneTransform(HumanBodyBones.RightRingIntermediate);
+        _fingerTargets[HandLandmarks.RingDistal] = anim.GetBoneTransform(HumanBodyBones.RightRingDistal);
+        _fingerTargets[HandLandmarks.LittleProximal] = anim.GetBoneTransform(HumanBodyBones.RightLittleProximal);
+        _fingerTargets[HandLandmarks.LittleIntermediate] = anim.GetBoneTransform(HumanBodyBones.RightLittleIntermediate);
+        _fingerTargets[HandLandmarks.LittleDistal] = anim.GetBoneTransform(HumanBodyBones.RightLittleDistal);
       } else {
-        _fingerTargets[0] = anim.GetBoneTransform(HumanBodyBones.LeftThumbProximal);
-        _fingerTargets[1] = anim.GetBoneTransform(HumanBodyBones.LeftThumbIntermediate);
-        _fingerTargets[2] = anim.GetBoneTransform(HumanBodyBones.LeftThumbDistal);
-        _fingerTargets[3] = anim.GetBoneTransform(HumanBodyBones.LeftIndexProximal);
-        _fingerTargets[4] = anim.GetBoneTransform(HumanBodyBones.LeftIndexIntermediate);
-        _fingerTargets[5] = anim.GetBoneTransform(HumanBodyBones.LeftIndexDistal);
-        _fingerTargets[6] = anim.GetBoneTransform(HumanBodyBones.LeftMiddleProximal);
-        _fingerTargets[7] = anim.GetBoneTransform(HumanBodyBones.LeftMiddleIntermediate);
-        _fingerTargets[8] = anim.GetBoneTransform(HumanBodyBones.LeftMiddleDistal);
-        _fingerTargets[9] = anim.GetBoneTransform(HumanBodyBones.LeftRingProximal);
-        _fingerTargets[10] = anim.GetBoneTransform(HumanBodyBones.LeftRingIntermediate);
-        _fingerTargets[11] = anim.GetBoneTransform(HumanBodyBones.LeftRingDistal);
-        _fingerTargets[12] = anim.GetBoneTransform(HumanBodyBones.LeftLittleProximal);
-        _fingerTargets[13] = anim.GetBoneTransform(HumanBodyBones.LeftLittleIntermediate);
-        _fingerTargets[14] = anim.GetBoneTransform(HumanBodyBones.LeftLittleDistal);
+        _fingerTargets[HandLandmarks.ThumbProximal] = anim.GetBoneTransform(HumanBodyBones.LeftThumbProximal);
+        _fingerTargets[HandLandmarks.ThumbIntermediate] = anim.GetBoneTransform(HumanBodyBones.LeftThumbIntermediate);
+        _fingerTargets[HandLandmarks.ThumbDistal] = anim.GetBoneTransform(HumanBodyBones.LeftThumbDistal);
+        _fingerTargets[HandLandmarks.IndexProximal] = anim.GetBoneTransform(HumanBodyBones.LeftIndexProximal);
+        _fingerTargets[HandLandmarks.IndexIntermediate] = anim.GetBoneTransform(HumanBodyBones.LeftIndexIntermediate);
+        _fingerTargets[HandLandmarks.IndexDistal] = anim.GetBoneTransform(HumanBodyBones.LeftIndexDistal);
+        _fingerTargets[HandLandmarks.MiddleProximal] = anim.GetBoneTransform(HumanBodyBones.LeftMiddleProximal);
+        _fingerTargets[HandLandmarks.MiddleIntermediate] = anim.GetBoneTransform(HumanBodyBones.LeftMiddleIntermediate);
+        _fingerTargets[HandLandmarks.MiddleDistal] = anim.GetBoneTransform(HumanBodyBones.LeftMiddleDistal);
+        _fingerTargets[HandLandmarks.RingProximal] = anim.GetBoneTransform(HumanBodyBones.LeftRingProximal);
+        _fingerTargets[HandLandmarks.RingIntermediate] = anim.GetBoneTransform(HumanBodyBones.LeftRingIntermediate);
+        _fingerTargets[HandLandmarks.RingDistal] = anim.GetBoneTransform(HumanBodyBones.LeftRingDistal);
+        _fingerTargets[HandLandmarks.LittleProximal] = anim.GetBoneTransform(HumanBodyBones.LeftLittleProximal);
+        _fingerTargets[HandLandmarks.LittleIntermediate] = anim.GetBoneTransform(HumanBodyBones.LeftLittleIntermediate);
+        _fingerTargets[HandLandmarks.LittleDistal] = anim.GetBoneTransform(HumanBodyBones.LeftLittleDistal);
       }
     }
 
