@@ -61,7 +61,7 @@ namespace SeedUnityVRKit {
         _kalmanFilters[i] = new KalmanFilter(0.125f, 1f);
       }
       _screenRatio = 1.0f * ScreenWidth / ScreenHeight;
-      // The output of HandPose detection is mirrored here
+      // The output of HandPose detection is mirrored here.
       if (handType == HandType.LeftHand) {
         _fingerTargets[0] = anim.GetBoneTransform(HumanBodyBones.RightThumbProximal);
         _fingerTargets[1] = anim.GetBoneTransform(HumanBodyBones.RightThumbIntermediate);

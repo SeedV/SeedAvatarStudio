@@ -110,6 +110,7 @@ namespace SeedUnityVRKit {
         }
       }
     }
+
     public virtual void GetSpecialPart() {
       _mouthMeshRenderer = GameObject.Find(MthDefConst).GetComponent<SkinnedMeshRenderer>();
       _eyeMeshRenderer = GameObject.Find(EyeDefConst).GetComponent<SkinnedMeshRenderer>();
