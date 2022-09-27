@@ -75,10 +75,10 @@ namespace SeedUnityVRKit {
         landmarks.Add(new PoseLandmark { Id = Landmarks.LeftShoulder,
                                          Rotation = Quaternion.LookRotation(
                                              rightShoulder - rightElbow, -forward) });
-        landmarks.Add(new PoseLandmark { Id = Landmarks.LeftElbow,
-                                         Rotation = Quaternion.LookRotation(
-                                             rightElbow - rightWrist,
-                                             rightShoulder - rightElbow) });
+        landmarks.Add(new PoseLandmark {
+          Id = Landmarks.LeftElbow,
+          Rotation = Quaternion.LookRotation(rightElbow - rightWrist, rightShoulder - rightElbow)
+        });
         landmarks.Add(new PoseLandmark { Id = Landmarks.RightShoulder,
                                          Rotation = Quaternion.LookRotation(
                                              leftShoulder - leftElbow, -forward) });
