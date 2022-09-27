@@ -103,7 +103,8 @@ namespace SeedUnityVRKit {
       solvePnP(_screenWidth, _screenHeight, _face3DPoints, pnpArray, null, null, _rotationVector,
                _translationVector, useExtrinsicGuess);
 
-      Vector3 axis = _neckFilter.Update(new Vector3(_rotationVector[0], _rotationVector[1], _rotationVector[2]));
+      Vector3 axis = _neckFilter.Update(
+          new Vector3(_rotationVector[0], _rotationVector[1], _rotationVector[2]));
       float theta = (float)(axis.magnitude * 180 / Math.PI);
       faceLandmarks.FaceRotation = Quaternion.AngleAxis(theta, axis);
 
