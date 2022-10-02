@@ -45,7 +45,7 @@ namespace SeedAvatar {
     public Dropdown FlipDropdown;
     public string DeviceName;
     public int Fps = 30;
-    public bool Flip = false;
+    public bool Flip = true;
     [SerializeField]
     private RenderTexture _buffer;
     private WebCamTexture _webCam;
@@ -130,10 +130,10 @@ namespace SeedAvatar {
     public void OnFlipDropdownChange(int value) {
       switch (value) {
         case (int)FlipOptions.NORMAL:
-          Flip = false;
+          Flip = true;
           break;
         case (int)FlipOptions.MIRRORING:
-          Flip = true;
+          Flip = false;
           break;
         default:
           break;
